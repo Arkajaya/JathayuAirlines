@@ -16,38 +16,76 @@ class ServiceForm
         return $schema
             ->components([
                 TextInput::make('flight_number')
+                    ->label('Flight Number')
+                    ->placeholder('e.g. GA123')
+                    ->helperText('Unique flight identifier')
                     ->required(),
+
                 TextInput::make('airline_name')
+                    ->label('Airline')
+                    ->placeholder('e.g. Garuda Indonesia')
                     ->required(),
+
                 TextInput::make('departure_city')
+                    ->label('Departure City')
+                    ->placeholder('e.g. Jakarta (CGK)')
                     ->required(),
+
                 TextInput::make('arrival_city')
+                    ->label('Arrival City')
+                    ->placeholder('e.g. Bali (DPS)')
                     ->required(),
+
                 DateTimePicker::make('departure_time')
+                    ->label('Departure Time')
                     ->required(),
+
                 DateTimePicker::make('arrival_time')
+                    ->label('Arrival Time')
                     ->required(),
+
                 TextInput::make('duration')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('capacity')
-                    ->required()
-                    ->numeric(),
-                TextInput::make('booked_seats')
-                    ->required()
+                    ->label('Duration (minutes)')
                     ->numeric()
-                    ->default(0),
-                TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('Rp'),
+                    ->placeholder('e.g. 180')
+                    ->helperText('Estimated flight duration in minutes')
+                    ->required(),
+
                 Select::make('class')
+                    ->label('Class')
                     ->options(['economy' => 'Economy', 'business' => 'Business', 'first' => 'First'])
                     ->required(),
-                Textarea::make('description')
-                    ->columnSpanFull(),
-                Toggle::make('is_active')
+
+                TextInput::make('price')
+                    ->label('Price')
+                    ->numeric()
+                    ->prefix('Rp ')
+                    ->placeholder('0')
+                    ->helperText('Set base ticket price'),
+
+                TextInput::make('capacity')
+                    ->label('Capacity')
+                    ->numeric()
+                    ->placeholder('e.g. 180')
                     ->required(),
+
+                TextInput::make('booked_seats')
+                    ->label('Booked Seats')
+                    ->numeric()
+                    ->default(0)
+                    ->helperText('Number of already booked seats')
+                    ->required(),
+
+                Textarea::make('description')
+                    ->label('Description')
+                    ->rows(4)
+                    ->columnSpanFull()
+                    ->placeholder('Add a short description about the service (airline, amenities, notes).'),
+
+                Toggle::make('is_active')
+                    ->label('Active')
+                    ->helperText('Toggle to make the service available for booking')
+                    ->inline(false),
             ]);
     }
 }

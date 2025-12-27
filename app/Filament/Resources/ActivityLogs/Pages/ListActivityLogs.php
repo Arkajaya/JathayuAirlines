@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ActivityLogs\Pages;
 use App\Filament\Resources\ActivityLogs\ActivityLogResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Widgets\ActivityLogStatsWidget;
 
 class ListActivityLogs extends ListRecords
 {
@@ -12,8 +13,11 @@ class ListActivityLogs extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return ActivityLogResource::canCreate() ? [CreateAction::make()] : [];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [ActivityLogStatsWidget::class];
     }
 }

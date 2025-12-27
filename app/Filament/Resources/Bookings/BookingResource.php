@@ -18,13 +18,18 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Models\User;
+use UnitEnum;
 
 
 class BookingResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ShoppingCart;
+
+    protected static ?string $navigationLabel = 'Bookings';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Business Management';
 
     protected static ?string $recordTitleAttribute = 'Booking';
 
@@ -54,7 +59,6 @@ class BookingResource extends Resource
     {
         return [
             'index' => ListBookings::route('/'),
-            'create' => CreateBooking::route('/create'),
             'view' => ViewBooking::route('/{record}'),
             'edit' => EditBooking::route('/{record}/edit'),
         ];
@@ -70,7 +74,7 @@ class BookingResource extends Resource
 
     public static function canCreate(): bool
     {
-        return (bool) auth()->user(); // any authenticated user can create a booking
+        return false; // bookings should be created by users via frontend, not from admin
     }
 
     public static function canView($record = null): bool
@@ -93,5 +97,11 @@ class BookingResource extends Resource
     {
         $user = auth()->user();
         return $user && $user->hasRole('Admin');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->hasRole('Admin') || $user->hasRole('Staff'));
     }
 }

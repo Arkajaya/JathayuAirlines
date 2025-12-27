@@ -10,7 +10,8 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -24,7 +25,24 @@ class CancellationsTable
                 TextColumn::make('booking.booking_code')->label('Booking')->searchable()->sortable(),
                 TextColumn::make('user.name')->label('User')->searchable()->sortable(),
                 TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'pending' => 'Pending',
+                        'approved' => 'Approved',
+                        'rejected' => 'Rejected',
+                        default => $state,
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'pending' => 'warning',
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => null,
+                    })
                     ->searchable(),
+                IconColumn::make('refund_method')
+                    ->label('Refund')
+                    ->icon(fn ($state) => $state === 'bank_transfer' ? Heroicon::Banknotes : ( $state === 'wallet' ? Heroicon::CreditCard : null ))
+                    ->sortable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -42,7 +60,7 @@ class CancellationsTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                EditAction::make()->visible(fn ($record) => auth()->user() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Staff'))),
+                // EditAction::make()->visible(fn ($record) => auth()->user() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Staff'))),
                 Action::make('approve')
                     ->label('Approve')
                     ->color('success')

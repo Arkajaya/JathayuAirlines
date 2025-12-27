@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Cancellations\Pages;
 use App\Filament\Resources\Cancellations\CancellationResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Widgets\CancellationStatsWidget;
 
 class ListCancellations extends ListRecords
 {
@@ -12,8 +13,11 @@ class ListCancellations extends ListRecords
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return CancellationResource::canCreate() ? [CreateAction::make()] : [];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [CancellationStatsWidget::class];
     }
 }

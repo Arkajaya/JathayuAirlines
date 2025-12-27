@@ -9,6 +9,7 @@ use App\Filament\Resources\Services\Schemas\ServiceForm;
 use App\Filament\Resources\Services\Tables\ServicesTable;
 use App\Models\Service;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -22,9 +23,12 @@ class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::GlobeAlt;
 
     protected static ?string $recordTitleAttribute = 'Service';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Business Management';
+
 
     public static function form(Schema $schema): Schema
     {
@@ -81,5 +85,11 @@ class ServiceResource extends Resource
     {
         $user = auth()->user();
         return $user && $user->hasRole('Admin');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->hasRole('Admin') || $user->hasRole('Staff'));
     }
 }

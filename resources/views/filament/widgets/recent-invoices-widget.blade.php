@@ -1,4 +1,4 @@
-<div class="filament-card p-4">
+<x-filament::card class="p-4">
   <div class="card-header">
     <div>
       <h3 class="card-title">Recent Invoices</h3>
@@ -41,4 +41,4 @@
       @endforeach
     </tbody>
   </table>
-</div>
+</x-filament::card>

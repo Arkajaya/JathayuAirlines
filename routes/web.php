@@ -62,9 +62,6 @@ Route::post('/email/verification-notification', [EmailVerificationNotificationCo
 // Dashboard route used by auth controllers
 Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
-// Atau jika ingin pakai controller:
-// Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-// Route::post('/register', [AuthController::class, 'register']);
 
 // ==============================================
 // PROTECTED ROUTES (HANYA UNTUK USER LOGIN)
@@ -107,20 +104,6 @@ Route::middleware(['auth'])->group(function () {
     // Admin dashboard
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    // Admin - Services CRUD
-    Route::get('/admin/services', [ServiceController::class, 'index'])->name('admin.services.index');
-    Route::get('/admin/services/create', [ServiceController::class, 'create'])->name('admin.services.create');
-    Route::post('/admin/services', [ServiceController::class, 'store'])->name('admin.services.store');
-    Route::get('/admin/services/{service}/edit', [ServiceController::class, 'edit'])->name('admin.services.edit');
-    Route::put('/admin/services/{service}', [ServiceController::class, 'update'])->name('admin.services.update');
-    Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy'])->name('admin.services.destroy');
-
-    // Filament compatibility alias: some Filament views expect named routes
-    // like `filament.admin.resources.services.index`. Provide aliases that
-    // redirect to the equivalent admin routes to avoid RouteNotFoundExceptions.
-    Route::get('filament/admin/resources/services', function () {
-        return redirect()->route('admin.services.index');
-    })->name('filament.admin.resources.services.index');
     
     // Logout
     Route::post('/logout', function () {

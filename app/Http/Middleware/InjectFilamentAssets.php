@@ -28,8 +28,8 @@ class InjectFilamentAssets
 
         // Prepare tags
         $cssTag = '<link rel="stylesheet" href="' . asset('css/filament-custom.css') . '" />';
-        $chartJs = '<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>';
-        $localJs = '<script src="' . asset('js/filament-widgets.js') . '"></script>';
+                $chartJs = '<script src="https://code.highcharts.com/highcharts.js"></script>';
+                $localJs = '<script src="' . asset('js/filament-widgets-charts.js') . '"></script>';
 
         // Inject CSS into head and scripts before closing body
         $content = preg_replace('#</head>#i', $cssTag . "\n</head>", $content, 1);

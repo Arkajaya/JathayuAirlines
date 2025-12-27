@@ -7,6 +7,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Schemas\Schema;
 
 class BlogForm
@@ -16,16 +17,11 @@ class BlogForm
         return $schema
             ->components([
                 TextInput::make('title')->required()->reactive(),
-                TextInput::make('slug')
-                    ->disabled()
-                    ->dehydrated(false)
-                    ->hint('Auto-generated from the title; leave blank to generate'),
+                Toggle::make('is_published')->required(),
                 Textarea::make('excerpt')->columnSpanFull(),
-                RichEditor::make('content')->required()->columnSpanFull(),
+                MarkdownEditor::make('content')->required()->columnSpanFull()->minHeight('300px'),
                 TextInput::make('author')->required(),
                 FileUpload::make('featured_image')->image()->nullable(),
-                TextInput::make('views')->numeric()->default(0),
-                Toggle::make('is_published')->required(),
             ]);
     }
 }

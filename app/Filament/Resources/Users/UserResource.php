@@ -9,6 +9,7 @@ use App\Filament\Resources\Users\Schemas\UserForm;
 use App\Filament\Resources\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -21,9 +22,12 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
 
     protected static ?string $recordTitleAttribute = 'User';
+
+    protected static UnitEnum|string|null $navigationGroup = 'User Management';
+
 
     public static function form(Schema $schema): Schema
     {
@@ -83,6 +87,12 @@ class UserResource extends Resource
     }
 
     public static function canDelete($record = null): bool
+    {
+        $user = auth()->user();
+        return $user && $user->hasRole('Admin');
+    }
+
+    public static function shouldRegisterNavigation(): bool
     {
         $user = auth()->user();
         return $user && $user->hasRole('Admin');

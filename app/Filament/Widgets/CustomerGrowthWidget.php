@@ -4,10 +4,16 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class CustomerGrowthWidget extends Widget
 {
     protected string $view = 'filament.widgets.customer-growth-widget';
+
+    public static function canView(): bool
+    {
+        return auth()->check() && auth()->user()->hasRole('Admin');
+    }
 
     public function getCountries()
     {

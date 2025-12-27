@@ -23,6 +23,26 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        // build widgets list based on role: hide summary/revenue/user widgets for Staff
+        $widgets = [
+            AccountWidget::class,
+        ];
+
+        $user = auth()->user();
+        if ($user && $user->hasRole('Admin')) {
+            $widgets = array_merge($widgets, [
+                \App\Filament\Widgets\SummaryMetricsWidget::class,
+                \App\Filament\Widgets\RecentInvoicesWidget::class,
+                \App\Filament\Widgets\CustomerGrowthWidget::class,
+                \App\Filament\Widgets\VisitByDeviceWidget::class,
+            ]);
+        } else {
+            // Staff: include only non-sensitive widgets
+            $widgets = array_merge($widgets, [
+                \App\Filament\Widgets\VisitByDeviceWidget::class,
+            ]);
+        }
+
         return $panel
             ->default()
             ->id('admin')
@@ -37,14 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
-            ->widgets([
-                AccountWidget::class,
-                FilamentInfoWidget::class,
-                \App\Filament\Widgets\SummaryMetricsWidget::class,
-                \App\Filament\Widgets\RecentInvoicesWidget::class,
-                \App\Filament\Widgets\CustomerGrowthWidget::class,
-                \App\Filament\Widgets\VisitByDeviceWidget::class,
-            ])
+            ->widgets($widgets)
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

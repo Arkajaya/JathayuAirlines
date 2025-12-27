@@ -25,6 +25,10 @@ class BlogsTable
                     ->searchable(),
                 TextColumn::make('author')
                     ->searchable(),
+                TextColumn::make('views')
+                    ->label('Views')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_published')
                     ->label('Published')
                     ->boolean()

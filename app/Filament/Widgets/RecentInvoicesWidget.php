@@ -4,10 +4,16 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class RecentInvoicesWidget extends Widget
 {
     protected string $view = 'filament.widgets.recent-invoices-widget';
+
+    public static function canView(): bool
+    {
+        return auth()->check() && auth()->user()->hasRole('Admin');
+    }
 
     public function getInvoices()
     {

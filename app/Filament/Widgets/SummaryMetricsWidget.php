@@ -5,10 +5,16 @@ namespace App\Filament\Widgets;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Throwable;
 
 class SummaryMetricsWidget extends Widget
 {
     protected string $view = 'filament.widgets.summary-metrics-widget';
+
+    public static function canView(): bool
+    {
+        return auth()->check() && auth()->user()->hasRole('Admin');
+    }
 
     public function getData(): array
     {

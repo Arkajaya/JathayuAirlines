@@ -11,6 +11,7 @@ use App\Filament\Resources\ActivityLogs\Schemas\ActivityLogInfolist;
 use App\Filament\Resources\ActivityLogs\Tables\ActivityLogsTable;
 use App\Models\ActivityLog;
 use BackedEnum;
+use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -24,7 +25,10 @@ class ActivityLogResource extends Resource
 {
     protected static ?string $model = ActivityLog::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
+
+    protected static UnitEnum|string|null $navigationGroup = 'User Management';
+
 
     protected static ?string $recordTitleAttribute = 'ActivityLog';
 
@@ -54,7 +58,6 @@ class ActivityLogResource extends Resource
     {
         return [
             'index' => ListActivityLogs::route('/'),
-            'create' => CreateActivityLog::route('/create'),
             'view' => ViewActivityLog::route('/{record}'),
             'edit' => EditActivityLog::route('/{record}/edit'),
         ];
@@ -85,6 +88,12 @@ class ActivityLogResource extends Resource
     }
 
     public static function canDelete($record = null): bool
+    {
+        $user = auth()->user();
+        return $user && $user->hasRole('Admin');
+    }
+
+    public static function shouldRegisterNavigation(): bool
     {
         $user = auth()->user();
         return $user && $user->hasRole('Admin');

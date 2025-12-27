@@ -12,6 +12,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -22,9 +23,13 @@ class CancellationResource extends Resource
 {
     protected static ?string $model = Cancellation::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedXMark;
 
-    protected static ?string $recordTitleAttribute = 'Canccelation';
+    protected static ?string $navigationLabel = 'Cancellations';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Business Management';
+
+    protected static ?string $recordTitleAttribute = 'Cancellation';
 
     public static function form(Schema $schema): Schema
     {
@@ -47,7 +52,7 @@ class CancellationResource extends Resource
     {
         return [
             'index' => ListCancellations::route('/'),
-            'create' => CreateCancellation::route('/create'),
+            // 'create' => CreateCancellation::route('/create'),
             'edit' => EditCancellation::route('/{record}/edit'),
         ];
     }
@@ -62,7 +67,7 @@ class CancellationResource extends Resource
 
     public static function canCreate(): bool
     {
-        return (bool) auth()->user(); // authenticated users can request cancellations
+        return false; // authenticated users can request cancellations
     }
 
     public static function canView($record = null): bool
@@ -77,12 +82,18 @@ class CancellationResource extends Resource
     {
         $user = auth()->user();
         // Staff and Admin can edit cancellation details/status
-        return $user && ($user->hasRole('Admin') || $user->hasRole('Staff'));
+        return false;
     }
 
     public static function canDelete($record = null): bool
     {
         $user = auth()->user();
         return $user && $user->hasRole('Admin');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->hasRole('Admin') || $user->hasRole('Staff'));
     }
 }

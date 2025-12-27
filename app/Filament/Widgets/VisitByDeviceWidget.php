@@ -3,10 +3,16 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\Widget;
+use Throwable;
 
 class VisitByDeviceWidget extends Widget
 {
     protected string $view = 'filament.widgets.visit-by-device-widget';
+
+    public static function canView(): bool
+    {
+        return auth()->check();
+    }
 
     public function getData()
     {

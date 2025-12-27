@@ -10,9 +10,11 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-
+    
 class BookingsTable
 {
     public static function configure(Table $table): Table
@@ -24,7 +26,29 @@ class BookingsTable
                 TextColumn::make('passenger_count')->numeric()->sortable(),
                 TextColumn::make('total_price')->money('idr')->sortable(),
                 TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'pending' => 'Pending',
+                        'confirmed' => 'Confirmed',
+                        'checked_in' => 'Checked In',
+                        'cancelled' => 'Cancelled',
+                        default => $state,
+                    })
+                    ->color(fn ($state) => match ($state) {
+                        'pending' => 'primary',
+                        'confirmed' => 'success',
+                        'checked_in' => 'warning',
+                        'cancelled' => 'danger',
+                        default => null,
+                    })
                     ->searchable(),
+                IconColumn::make('payment_status')
+                    ->label('Paid')
+                    ->boolean()
+                    ->trueIcon(Heroicon::Check)
+                    ->falseIcon(Heroicon::XMark)
+                    ->trueColor('success')
+                    ->falseColor('danger'),
                 TextColumn::make('booking_code')
                     ->searchable(),
                 TextColumn::make('deleted_at')

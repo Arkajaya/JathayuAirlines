@@ -90,4 +90,10 @@ class BlogResource extends Resource
         $user = auth()->user();
         return $user && $user->hasRole('Admin');
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        $user = auth()->user();
+        return $user && ($user->hasRole('Admin') || $user->hasRole('Staff'));
+    }
 }
