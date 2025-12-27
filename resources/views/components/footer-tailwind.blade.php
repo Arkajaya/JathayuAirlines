@@ -7,7 +7,7 @@
             <!-- Kolom 1: Logo dan Deskripsi -->
             <div class="space-y-6">
                 <div class="flex items-center space-x-4">
-                    <img src="{{ asset('storage/logo.png') }}" alt="Jathayu Airlines" class="h-16">
+                    <img src="{{ asset('logo.png') }}" alt="Jathayu Airlines" class="h-16">
                     <div>
                         <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                             JATHAYU AIRLINES

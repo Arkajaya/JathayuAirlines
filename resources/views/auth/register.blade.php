@@ -3,12 +3,9 @@
 @section('title', 'Daftar - Jathayu Airlines')
 
 @section('content')
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-white to-accent/10 py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
+<div class="min-h-screen flex space-x-9 justify-center bg-gradient-to-br from-primary/10 via-white to-accent/10 py-12 px-4 sm:px-6 lg:px-8">
+    <div class=" max-w-md w-[70%] space-y-8">
         <div>
-            <div class="flex justify-center">
-                <img src="{{ asset('storage/logo.png') }}" alt="Jathayu Airlines" class="h-16">
-            </div>
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Buat Akun Baru
             </h2>
@@ -100,6 +97,9 @@
                 </ul>
             </div>
         </form>
+    </div>
+     <div class="flex justify-center w-[38%] relative">
+        <img src="{{ asset('logo.png') }}" alt="Jathayu Airlines" class="h-[38rem] absolute top-20 bg-sky-600/10 shadow-lg ">
     </div>
 </div>
 @endsection

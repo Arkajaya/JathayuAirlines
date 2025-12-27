@@ -6,8 +6,8 @@
 <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-white to-accent/10 py-12 px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-8">
         <div>
-            <div class="flex justify-center">
-                <img src="{{ asset('storage/logo.png') }}" alt="Jathayu Airlines" class="h-16">
+            <div class="flex justify-center h-20 relative">
+                <img src="{{ asset('logo.png') }}" alt="Jathayu Airlines" class="h-60 absolute -top-20">
             </div>
             <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Masuk ke Akun Anda

@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     protected $fillable = [
         'name',
@@ -31,11 +33,6 @@ class User extends Authenticatable
         'birth_date' => 'date',
     ];
 
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
-
     public function bookings()
     {
         return $this->hasMany(Booking::class);
@@ -46,18 +43,24 @@ class User extends Authenticatable
         return $this->hasMany(Cancellation::class);
     }
 
-    public function isAdmin()
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
     {
-        return $this->role_id === 1;
+        // Prefer role check via Spatie if available, fallback to role_id === 1
+        if (method_exists($this, 'hasRole')) {
+            try {
+                // Check common variants for role name
+                if ($this->hasRole('Admin') || $this->hasRole('admin')) {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                // ignore and fallback
+            }
+        }
+
+        return (int) $this->role_id === 1;
     }
 
-    public function isStaff()
-    {
-        return $this->role_id === 2;
-    }
-
-    public function isUser()
-    {
-        return $this->role_id === 3;
-    }
 }
