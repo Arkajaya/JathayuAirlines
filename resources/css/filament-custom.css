@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Filament theme to match reference */
+:root {
+  --filament-primary: #6f42c1; /* refined purple */
+  --filament-sidebar-bg: #faf5ff; /* light lavender */
+  --filament-card-bg: #ffffff;
+}
+
+/* Sidebar */
+.filament-sidebar {
+  background-color: var(--filament-sidebar-bg) !important;
+}
+
+.filament-sidebar .filament-nav-item {
+  border-radius: 10px;
+  margin: 0.25rem 0;
+}
+
+.filament-sidebar .filament-nav-item a {
+  color: #0f172a;
+}
+
+.filament-sidebar .filament-nav-item a:hover {
+  background: linear-gradient(90deg, rgba(124,58,237,0.08), rgba(124,58,237,0.02));
+}
+
+/* Topbar */
+.filament-topbar {
+  background: linear-gradient(90deg, rgba(124,58,237,0.06), rgba(124,58,237,0.02));
+  border-bottom: 1px solid rgba(15,23,42,0.04);
+}
+
+.filament-topbar .filament-global-search {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(2,6,23,0.04);
+}
+
+/* Card */
+.filament-card {
+  background-color: var(--filament-card-bg);
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.06);
+}
+
+/* Accent color */
+.text-accent,
+.bg-accent {
+  color: var(--filament-primary) !important;
+  background-color: var(--filament-primary) !important;
+}
+
+/* SVG icon color helper */
+.icon-accent svg { fill: var(--filament-primary); }
+
+/* Small tweaks for table rows and badges */
+.filament-tables-table tr:hover {
+  background-color: rgba(124,58,237,0.03);
+}
+
+.filament-badge {
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+}
+
+.filament-card .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.filament-card .card-title {
+  font-weight: 600;
+}
+
+.filament-card .card-subtitle {
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+/* Responsive container spacing */
+.filament-main {
+  padding: 1.25rem;
+}
+
+/* Dashboard grid to match reference */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-card-wide { grid-column: span 8; }
+.dashboard-card-narrow { grid-column: span 4; }
+
+/* Simple utility for avatar in topbar */
+.topbar-avatar { width: 34px; height: 34px; border-radius: 9999px; }
+
+/* Small responsive tweaks */
+@media (max-width: 768px) {
+  .dashboard-card-wide { grid-column: span 12; }
+  .dashboard-card-narrow { grid-column: span 12; }
+}

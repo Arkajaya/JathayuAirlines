@@ -3,20 +3,12 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        // Roles table (only create if missing)
-        if (! Schema::hasTable('roles')) {
-            Schema::create('roles', function (Blueprint $table) {
-                $table->id();
-                $table->string('name');
-                $table->string('description')->nullable();
-                $table->timestamps();
-            });
-        }
 
         // Users table sudah ada dari Breeze, kita tambah role_id jika belum ada
         if (Schema::hasTable('users') && ! Schema::hasColumn('users', 'role_id')) {
@@ -25,6 +17,7 @@ return new class extends Migration
                 $table->string('phone')->nullable();
                 $table->text('address')->nullable();
                 $table->date('birth_date')->nullable();
+                // $table->softDeletes();
             });
         }
 
@@ -45,6 +38,7 @@ return new class extends Migration
                 $table->enum('class', ['economy', 'business', 'first']);
                 $table->text('description')->nullable();
                 $table->boolean('is_active')->default(true);
+                $table->softDeletes();
                 $table->timestamps();
             });
         }
@@ -126,6 +120,6 @@ return new class extends Migration
                 $table->dropColumn(['role_id', 'phone', 'address', 'birth_date']);
             });
         }
-        Schema::dropIfExists('roles');
+        // roles table managed by permissions package; do not drop here.
     }
 };

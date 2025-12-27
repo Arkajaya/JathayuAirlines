@@ -15,7 +15,10 @@ return new class extends Migration
     $table->text('excerpt')->nullable();
     $table->longText('content');
     $table->string('author');
+    $table->string('featured_image')->nullable();
+    $table->integer('views')->default(0);
     $table->boolean('is_published')->default(false);
+    $table->softDeletes();
     $table->timestamps();
 });
 

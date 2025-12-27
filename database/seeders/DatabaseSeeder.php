@@ -4,19 +4,22 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\User;
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use App\Models\Service;
 use App\Models\Blog;
+use App\Models\Booking;
+use App\Models\Cancellation;
+use App\Models\ActivityLog;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create roles
+        // Create roles (using Spatie Permission fields)
         $roles = [
-            ['name' => 'Admin', 'description' => 'Administrator dengan akses penuh'],
-            ['name' => 'Staff', 'description' => 'Staff operasional'],
-            ['name' => 'User', 'description' => 'Pengguna biasa'],
+            ['name' => 'Admin', 'guard_name' => 'web'],
+            ['name' => 'Staff', 'guard_name' => 'web'],
+            ['name' => 'User', 'guard_name' => 'web'],
         ];
 
         foreach ($roles as $role) {
@@ -24,82 +27,69 @@ class DatabaseSeeder extends Seeder
         }
 
         // Create admin user
-        User::create([
-            'name' => 'Admin Jathayu',
+        $admin = User::create([
+            'name' => 'Hendra Admin',
             'email' => 'admin@jathayu.com',
             'password' => bcrypt('password123'),
             'role_id' => 1,
             'email_verified_at' => now(),
         ]);
 
-        // Create sample flights
-        $flights = [
-            [
-                'flight_number' => 'JA701',
-                'airline_name' => 'Jathayu Airlines',
-                'departure_city' => 'Jakarta (CGK)',
-                'arrival_city' => 'Denpasar (DPS)',
-                'departure_time' => now()->addDays(1)->setTime(8, 0),
-                'arrival_time' => now()->addDays(1)->setTime(10, 30),
-                'duration' => 150,
-                'capacity' => 180,
-                'price' => 1250000,
-                'class' => 'economy',
-                'description' => 'Penerbangan langsung ke Bali',
-            ],
-            [
-                'flight_number' => 'JA702',
-                'airline_name' => 'Jathayu Airlines',
-                'departure_city' => 'Jakarta (CGK)',
-                'arrival_city' => 'Surabaya (SUB)',
-                'departure_time' => now()->addDays(2)->setTime(14, 0),
-                'arrival_time' => now()->addDays(2)->setTime(15, 30),
-                'duration' => 90,
-                'capacity' => 160,
-                'price' => 850000,
-                'class' => 'business',
-                'description' => 'Penerbangan bisnis dengan fasilitas lengkap',
-            ],
-        ];
+        $staff = User::create([
+            'name' => 'Neonardo Staff',
+            'email' => 'staff@jathayu.com',
+            'password' => bcrypt('password123'),
+            'role_id' => 2,
+            'email_verified_at' => now(),
+        ]);
 
-        foreach ($flights as $flight) {
-            Service::create($flight);
+        // Assign Spatie roles to created users to keep role checks consistent
+        try {
+            $admin->assignRole('Admin');
+        } catch (\Exception $e) {
+            // ignore if roles not configured
         }
 
-        // Create sample blogs
-        $blogs = [
-            [
-                'title' => 'Tips Traveling Nyaman dengan Jathayu Airlines',
-                'slug' => 'tips-traveling-nyaman',
-                'excerpt' => 'Pelajari cara membuat perjalanan Anda lebih nyaman dengan tips dari kami',
-                'content' => '<p>Traveling dengan pesawat bisa menjadi pengalaman yang menyenangkan jika Anda mempersiapkannya dengan baik. Berikut adalah beberapa tips untuk membuat perjalanan Anda lebih nyaman:</p>
-                <ul>
-                    <li>Check-in online 24 jam sebelum keberangkatan</li>
-                    <li>Datang ke bandara minimal 2 jam sebelum keberangkatan</li>
-                    <li>Bawa barang bawaan yang sesuai dengan ketentuan</li>
-                    <li>Gunakan fasilitas lounge jika tersedia</li>
-                </ul>',
-                'author' => 'Tim Jathayu',
-                'is_published' => true,
-            ],
-            [
-                'title' => 'Destinasi Populer 2024 dengan Jathayu',
-                'slug' => 'destinasi-populer-2024',
-                'excerpt' => 'Temukan destinasi terpopuler tahun ini yang bisa Anda kunjungi',
-                'content' => '<p>Tahun 2024 membawa banyak destinasi menarik yang bisa Anda jelajahi dengan Jathayu Airlines:</p>
-                <ol>
-                    <li><strong>Bali</strong> - Pulau Dewata dengan pantai eksotis</li>
-                    <li><strong>Yogyakarta</strong> - Kota budaya dan sejarah</li>
-                    <li><strong>Labuan Bajo</strong> - Gerbang menuju Komodo</li>
-                    <li><strong>Raja Ampat</strong> - Surga penyelam dunia</li>
-                </ol>',
-                'author' => 'Tim Marketing',
-                'is_published' => true,
-            ],
-        ];
-
-        foreach ($blogs as $blog) {
-            Blog::create($blog);
+        try {
+            $staff->assignRole('Staff');
+        } catch (\Exception $e) {
+            // ignore if roles not configured
         }
+
+        // Create additional users
+        User::factory(50)->create();
+
+        // Create services (flights)
+        Service::factory(20)->create();
+
+        // Create blogs using factory
+        Blog::factory(10)->create();
+
+        // Create bookings: attach to existing users and services and compute total_price
+        $users = User::all();
+        $services = Service::all();
+
+        $bookings = Booking::factory(150)->make()->each(function ($booking) use ($users, $services) {
+            $booking->user_id = $users->random()->id;
+            $service = $services->random();
+            $booking->service_id = $service->id;
+            $booking->total_price = $service->price * $booking->passenger_count;
+            $booking->save();
+        });
+
+        // Create cancellations for some bookings
+        $bookings = Booking::inRandomOrder()->take(20)->get();
+        foreach ($bookings as $b) {
+            Cancellation::factory()->create([
+                'booking_id' => $b->id,
+                'user_id' => $b->user_id,
+            ]);
+        }
+
+        // Activity logs
+        ActivityLog::factory(200)->make()->each(function ($log) use ($users) {
+            $log->user_id = $users->random()->id;
+            $log->save();
+        });
     }
 }

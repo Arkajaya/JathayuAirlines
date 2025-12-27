@@ -17,9 +17,9 @@ class CheckInController extends Controller
     {
         $request->validate([
             'booking_code' => 'required|string',
-            'passenger_name' => 'required|string',
         ]);
 
+        // Find booking and ensure user owns it (or allow guest access if owner not logged)
         $booking = Booking::where('booking_code', $request->booking_code)
             ->where('user_id', Auth::id())
             ->first();
@@ -32,17 +32,40 @@ class CheckInController extends Controller
             return back()->with('error', 'Check-in sudah dilakukan sebelumnya.');
         }
 
-        // Verifikasi nama penumpang
-        $passengerExists = collect($booking->passenger_details)
-            ->contains(function ($passenger) use ($request) {
-                return strtolower($passenger['name']) === strtolower($request->passenger_name);
-            });
+        // Show preview page where user selects passenger
+        return view('checkin.preview', compact('booking'));
+    }
 
-        if (!$passengerExists) {
-            return back()->with('error', 'Nama penumpang tidak sesuai dengan booking.');
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'booking_code' => 'required|string',
+            'passenger_index' => 'required|integer|min:0',
+        ]);
+
+        $booking = Booking::where('booking_code', $request->booking_code)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$booking) {
+            return back()->with('error', 'Booking tidak ditemukan atau Anda tidak memiliki akses.');
         }
 
+        if ($booking->is_checkin) {
+            return redirect()->route('checkin.index')->with('error', 'Check-in sudah dilakukan untuk booking ini.');
+        }
+
+        $passengers = $booking->passenger_details ?? [];
+        $idx = (int) $request->passenger_index;
+
+        if (!isset($passengers[$idx]) || empty($passengers[$idx]['name'])) {
+            return back()->with('error', 'Pilihan penumpang tidak valid.');
+        }
+
+        // Mark booking as checked-in. In a real app we may track which passenger checked-in.
         $booking->update(['is_checkin' => true]);
+
+        // Optionally store last_checked_in_passenger for audit (not schema-backed here)
 
         return view('checkin.success', compact('booking'))
             ->with('success', 'Check-in berhasil! Silakan download boarding pass Anda.');

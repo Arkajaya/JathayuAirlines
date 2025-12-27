@@ -9,7 +9,11 @@ class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::all();
+        // Show only published blogs and paginate for better UX
+        $blogs = Blog::where('is_published', true)
+            ->orderBy('created_at', 'desc')
+            ->paginate(9);
+
         return view('blog.index', compact('blogs'));
     }
 

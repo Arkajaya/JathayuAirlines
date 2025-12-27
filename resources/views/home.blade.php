@@ -176,11 +176,9 @@
                         <i class="fas fa-plane-departure absolute left-4 top-4 text-gray-400"></i>
                         <select name="from" class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
                             <option value="">Pilih Kota Asal</option>
-                            <option value="Jakarta (CGK)">Jakarta (CGK)</option>
-                            <option value="Denpasar (DPS)">Denpasar (DPS)</option>
-                            <option value="Surabaya (SUB)">Surabaya (SUB)</option>
-                            <option value="Medan (KNO)">Medan (KNO)</option>
-                            <option value="Yogyakarta (YIA)">Yogyakarta (YIA)</option>
+                            @foreach(($citiesFrom ?? []) as $city)
+                                <option value="{{ $city }}" {{ request('from') === $city ? 'selected' : '' }}>{{ $city }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -191,11 +189,9 @@
                         <i class="fas fa-plane-arrival absolute left-4 top-4 text-gray-400"></i>
                         <select name="to" class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
                             <option value="">Pilih Kota Tujuan</option>
-                            <option value="Denpasar (DPS)">Denpasar (DPS)</option>
-                            <option value="Jakarta (CGK)">Jakarta (CGK)</option>
-                            <option value="Surabaya (SUB)">Surabaya (SUB)</option>
-                            <option value="Medan (KNO)">Medan (KNO)</option>
-                            <option value="Makassar (UPG)">Makassar (UPG)</option>
+                            @foreach(($citiesTo ?? []) as $city)
+                                <option value="{{ $city }}" {{ request('to') === $city ? 'selected' : '' }}>{{ $city }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -204,10 +200,10 @@
                     <label class="block text-gray-700 mb-2 font-medium">Tanggal Berangkat</label>
                     <div class="relative">
                         <i class="fas fa-calendar-alt absolute left-4 top-4 text-gray-400"></i>
-                        <input type="date" 
+                           <input type="date" 
                                name="date" 
                                class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all"
-                               value="{{ date('Y-m-d') }}">
+                               value="{{ request('date') ?? date('Y-m-d') }}">
                     </div>
                 </div>
                 
@@ -216,12 +212,10 @@
                     <div class="relative">
                         <i class="fas fa-users absolute left-4 top-4 text-gray-400"></i>
                         <select name="passengers" class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all">
-                            <option value="1">1 Penumpang</option>
-                            <option value="2" selected>2 Penumpang</option>
-                            <option value="3">3 Penumpang</option>
-                            <option value="4">4 Penumpang</option>
-                            <option value="5">5 Penumpang</option>
-                            <option value="6">6+ Penumpang</option>
+                            @php $p = request('passengers') ?: 1; @endphp
+                            @for($i=1;$i<=6;$i++)
+                                <option value="{{ $i }}" {{ (int)$p === $i ? 'selected' : '' }}>{{ $i }} Penumpang{{ $i === 6 ? '+' : '' }}</option>
+                            @endfor
                         </select>
                     </div>
                 </div>
@@ -243,18 +237,18 @@
                 <div class="p-6">
                     <div class="flex justify-between items-start mb-6">
                         <div>
-                            <h3 class="text-2xl font-bold text-gray-900">{{ $flight->departure_city }} → {{ $flight->arrival_city }}</h3>
+                            <h3 class="text-2xl font-bold text-gray-900">{{ $flight->departure_city }}  →  {{ $flight->arrival_city }}</h3>
                             <div class="flex items-center mt-2">
-                                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium mr-3">
+                                <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-medium mr-3">
                                     {{ $flight->flight_number }}
                                 </span>
-                                <span class="bg-blue-100 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                                <span class="bg-blue-100 text-primary px-3 py-1 rounded-full text-xs font-medium">
                                     {{ strtoupper($flight->class) }}
                                 </span>
                             </div>
                         </div>
                         <div class="text-right">
-                            <div class="text-3xl font-bold text-primary">Rp {{ number_format($flight->price, 0, ',', '.') }}</div>
+                            <div class="text-2xl font-bold text-primary">Rp {{ number_format($flight->price, 0, ',', '.') }}</div>
                             <div class="text-gray-500 text-sm">per orang</div>
                         </div>
                     </div>
@@ -295,7 +289,7 @@
                             </div>
                         </div>
                         
-                        <a href="{{ route('bookings.index') }}?flight={{ $flight->id }}" 
+                        <a href="{{ route('bookings.create', $flight) }}" 
                            class="bg-primary text-white px-6 py-3 rounded-xl font-medium hover:bg-secondary hover:scale-105 transition-all duration-300">
                             Pesan Sekarang
                         </a>

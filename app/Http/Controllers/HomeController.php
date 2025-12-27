@@ -21,6 +21,19 @@ class HomeController extends Controller
             ->take(3)
             ->get();
 
-        return view('home', compact('flights', 'blogs'));
+        // Provide distinct city lists for the search form (from/to)
+        $citiesFrom = Service::where('is_active', true)
+            ->where('departure_time', '>', now())
+            ->distinct()
+            ->orderBy('departure_city')
+            ->pluck('departure_city');
+
+        $citiesTo = Service::where('is_active', true)
+            ->where('departure_time', '>', now())
+            ->distinct()
+            ->orderBy('arrival_city')
+            ->pluck('arrival_city');
+
+        return view('home', compact('flights', 'blogs', 'citiesFrom', 'citiesTo'));
     }
 }

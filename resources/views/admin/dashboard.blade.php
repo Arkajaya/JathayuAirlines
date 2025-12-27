@@ -14,7 +14,7 @@
     <!-- Stats Cards -->
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -23,7 +23,9 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $todayBookings }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-calendar-check fa-2x text-primary"></i>
+                            <div class="rounded-full p-3 bg-primary/10 text-primary">
+                                <i class="fas fa-calendar-check fa-lg"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -31,7 +33,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -40,7 +42,9 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $pendingCancellations }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-times-circle fa-2x text-warning"></i>
+                            <div class="rounded-full p-3 bg-yellow-50 text-warning">
+                                <i class="fas fa-times-circle fa-lg"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -48,7 +52,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -57,7 +61,9 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">Rp {{ number_format($monthlyRevenue, 0, ',', '.') }}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-dollar-sign fa-2x text-success"></i>
+                            <div class="rounded-full p-3 bg-green-50 text-success">
+                                <i class="fas fa-wallet fa-lg"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -65,7 +71,7 @@
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
+            <div class="card shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -74,7 +80,9 @@
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{ number_format($averageOccupancy, 1) }}%</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fas fa-percentage fa-2x text-info"></i>
+                            <div class="rounded-full p-3 bg-blue-50 text-info">
+                                <i class="fas fa-users fa-lg"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,7 +98,12 @@
                     <h6 class="m-0 font-weight-bold text-primary">Statistik Reservasi 30 Hari Terakhir</h6>
                 </div>
                 <div class="card-body">
-                    <canvas id="bookingChart" height="200"></canvas>
+                    @php $hasBookingData = collect($bookingStats['data'])->sum() > 0; @endphp
+                    @if($hasBookingData)
+                        <canvas id="bookingChart" height="200"></canvas>
+                    @else
+                        <div class="py-12 text-center text-gray-500">Tidak ada data pemesanan 30 hari terakhir.</div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -101,7 +114,11 @@
                     <h6 class="m-0 font-weight-bold text-primary">Distribusi Kelas</h6>
                 </div>
                 <div class="card-body">
-                    <canvas id="classDistributionChart" height="200"></canvas>
+                    @if(count($classDistribution['labels']))
+                        <canvas id="classDistributionChart" height="200"></canvas>
+                    @else
+                        <div class="py-12 text-center text-gray-500">Tidak ada distribusi kelas untuk bulan ini.</div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -148,7 +165,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.bookings.show', $booking) }}" 
+                                                     <a href="{{ route('bookings.show', $booking) }}" 
                                            class="btn btn-sm btn-outline-primary">
                                             <i class="fas fa-eye"></i>
                                         </a>
