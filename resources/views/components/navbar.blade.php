@@ -59,29 +59,7 @@
                                 </div>
                             </a>
                             
-                            <!-- Flight Status -->
-                            <a href="#" 
-                               class="flex items-center px-6 py-3 hover:bg-purple-50 group transition-colors duration-300">
-                                <div class="w-10 h-10 bg-gradient-to-br from-purple-100 to-purple-200 rounded-lg flex items-center justify-center mr-4 group-hover:from-purple-200 group-hover:to-purple-300 transition-all duration-300">
-                                    <i class="fas fa-clock text-purple-600 text-lg"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Status Penerbangan</h4>
-                                    <p class="text-sm text-gray-500">Cek status penerbangan</p>
-                                </div>
-                            </a>
                             
-                            <!-- Baggage Info -->
-                            <a href="#" 
-                               class="flex items-center px-6 py-3 hover:bg-yellow-50 group transition-colors duration-300">
-                                <div class="w-10 h-10 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-lg flex items-center justify-center mr-4 group-hover:from-yellow-200 group-hover:to-yellow-300 transition-all duration-300">
-                                    <i class="fas fa-suitcase text-yellow-600 text-lg"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Informasi Bagasi</h4>
-                                    <p class="text-sm text-gray-500">Ketentuan bagasi</p>
-                                </div>
-                            </a>
                         </div>
                         
                         <div class="border-t border-gray-100 mt-4 pt-4 px-6">
@@ -140,25 +118,13 @@
                         <div class="border-t border-gray-100 pt-4 px-4">
                             <h4 class="font-bold text-gray-900 text-lg mb-3">Quick Info</h4>
                             <div class="grid grid-cols-2 gap-3">
-                                <a href="#" class="p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors duration-300">
+                                <a href="{{ route('destinations') }}" class="p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors duration-300">
                                     <div class="flex items-center">
                                         <i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>
                                         <span class="text-sm font-medium">Destinasi</span>
                                     </div>
                                 </a>
-                                <a href="#" class="p-3 bg-gray-50 hover:bg-green-50 rounded-lg transition-colors duration-300">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-tag text-green-600 mr-2"></i>
-                                        <span class="text-sm font-medium">Promo</span>
-                                    </div>
-                                </a>
-                                <a href="#" class="p-3 bg-gray-50 hover:bg-purple-50 rounded-lg transition-colors duration-300">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-question-circle text-purple-600 mr-2"></i>
-                                        <span class="text-sm font-medium">FAQ</span>
-                                    </div>
-                                </a>
-                                <a href="#" class="p-3 bg-gray-50 hover:bg-yellow-50 rounded-lg transition-colors duration-300">
+                                <a href="#footer" class="p-3 bg-gray-50 hover:bg-yellow-50 rounded-lg transition-colors duration-300">
                                     <div class="flex items-center">
                                         <i class="fas fa-info-circle text-yellow-600 mr-2"></i>
                                         <span class="text-sm font-medium">Tentang</span>
@@ -170,19 +136,13 @@
                 </div>
 
                 <!-- Destinations Link -->
-                <a href="#" 
+                <a href="{{ route('destinations') }}" 
                    class="text-gray-700 hover:text-primary font-medium transition-colors duration-300">
                     Destinasi
                 </a>
 
-                <!-- Promotions Link -->
-                <a href="#" 
-                   class="text-gray-700 hover:text-primary font-medium transition-colors duration-300">
-                    Promo
-                </a>
-
                 <!-- Get in Touch Button -->
-                <a href="#contact" 
+                <a href="#footer" 
                    class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg hover:scale-105 transition-all duration-300">
                     Hubungi Kami
                 </a>
@@ -213,10 +173,10 @@
                              x-transition:leave="transition ease-in duration-75"
                              x-transition:leave-start="transform opacity-100 scale-100"
                              x-transition:leave-end="transform opacity-0 scale-95"
-                             class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-50"
+                             class="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-50"
                              style="display: none;">
                             <div class="px-4 py-3 border-b border-gray-100">
-                                <p class="text-sm font-medium text-gray-900">{{ Auth::user()->name }}</p>
+                                <p class="text-base font-medium text-gray-900">{{ Auth::user()->name }}</p>
                                 <p class="text-xs text-gray-500">{{ Auth::user()->email }}</p>
                             </div>
                             
@@ -232,6 +192,11 @@
                                 <a href="{{ route('checkin.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                     <i class="fas fa-check-circle mr-3 text-gray-400"></i>
                                     Check-in Online
+                                </a>
+
+                                <a href="{{ route('cancellations.index') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <i class="fas fa-circle-xmark mr-3 text-gray-400"></i>
+                                    Pengajuan Pembatalan
                                 </a>
                                 
                                 @if(Auth::user()->isAdmin())
@@ -314,8 +279,6 @@
                          style="display: none;">
                         <a href="{{ route('bookings.index') }}" class="block py-2 text-gray-600 hover:text-primary">Reservasi Tiket</a>
                         <a href="{{ route('checkin.index') }}" class="block py-2 text-gray-600 hover:text-primary">Check-in Online</a>
-                        <a href="#" class="block py-2 text-gray-600 hover:text-primary">Status Penerbangan</a>
-                        <a href="#" class="block py-2 text-gray-600 hover:text-primary">Informasi Bagasi</a>
                     </div>
                 </div>
                 
@@ -340,20 +303,10 @@
                          style="display: none;">
                         <a href="{{ route('blogs.index') }}" class="block py-2 text-gray-600 hover:text-primary">Blog Perjalanan</a>
                         <a href="{{ route('infographics') }}" class="block py-2 text-gray-600 hover:text-primary">Statistik</a>
-                        <a href="#" class="block py-2 text-gray-600 hover:text-primary">Destinasi</a>
-                        <a href="#" class="block py-2 text-gray-600 hover:text-primary">Promo</a>
                     </div>
                 </div>
                 
-                <a href="#" class="block py-3 px-4 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-300">
-                    <i class="fas fa-map-marker-alt mr-3"></i> Destinasi
-                </a>
-                
-                <a href="#" class="block py-3 px-4 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-300">
-                    <i class="fas fa-tag mr-3"></i> Promo
-                </a>
-                
-                <a href="#contact" class="block py-3 px-4 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-300">
+                <a href="#footer" class="block py-3 px-4 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-300">
                     <i class="fas fa-phone-alt mr-3"></i> Hubungi Kami
                 </a>
                 
@@ -366,7 +319,7 @@
                             <i class="fas fa-ticket-alt mr-3"></i> Riwayat Pemesanan
                         </a>
                         @if(Auth::user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="block py-3 px-4 text-primary hover:bg-blue-50 rounded-lg transition-colors duration-300">
+                            <a href="{{ route('/filament/admin') }}" class="block py-3 px-4 text-primary hover:bg-blue-50 rounded-lg transition-colors duration-300">
                                 <i class="fas fa-chart-line mr-3"></i> Dashboard Admin
                             </a>
                         @endif

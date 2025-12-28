@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -35,11 +36,32 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        // Ensure a default "User" role exists and use its id for the new user
+        try {
+            $role = Role::firstOrCreate(['name' => 'User'], ['guard_name' => 'web']);
+            $roleId = $role->id;
+        } catch (\Exception $e) {
+            $roleId = null;
+        }
+
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-        ]);
+        ];
+
+        if ($roleId) {
+            $userData['role_id'] = $roleId;
+        }
+
+        $user = User::create($userData);
+
+        // Try to assign Spatie role as well (safe to ignore failure)
+        try {
+            $user->assignRole('User');
+        } catch (\Exception $e) {
+            // ignore
+        }
 
         event(new Registered($user));
 

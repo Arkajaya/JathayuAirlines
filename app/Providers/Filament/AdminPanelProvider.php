@@ -34,12 +34,16 @@ class AdminPanelProvider extends PanelProvider
                 \App\Filament\Widgets\SummaryMetricsWidget::class,
                 \App\Filament\Widgets\RecentInvoicesWidget::class,
                 \App\Filament\Widgets\CustomerGrowthWidget::class,
-                \App\Filament\Widgets\VisitByDeviceWidget::class,
+                \App\Filament\Widgets\ActivityChart::class,
+                \App\Filament\Widgets\RevenueChart::class,
+                \App\Filament\Widgets\BookingChart::class,
+                \App\Filament\Widgets\CancellationStatusWidget::class,
             ]);
         } else {
             // Staff: include only non-sensitive widgets
             $widgets = array_merge($widgets, [
-                \App\Filament\Widgets\VisitByDeviceWidget::class,
+                \App\Filament\Widgets\BookingChart::class,
+                \App\Filament\Widgets\CancellationStatusWidget::class,
             ]);
         }
 

@@ -44,7 +44,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8">
                     <div class="text-center">
                         <div class="text-3xl font-bold">500+</div>
-                        <div class="text-gray-200 text-sm">Penerbangan/Minggu</div>
+                        <div class="text-gray-200 text-sm">Penerbangan <br> /Minggu</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold">95%</div>
@@ -314,9 +314,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @foreach($blogs as $blog)
             <div class="bg-white rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 overflow-hidden">
-                <div class="h-48 bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
-                    <i class="fas fa-newspaper text-white text-5xl opacity-50"></i>
-                </div>
+                        @if($blog->featured_image)
+                            <img src="{{ asset('storage/'.$blog->featured_image) }}" alt="{{ $blog->title }}" class="w-full h-48 object-cover">
+                        @else
+                            <div class="h-48 bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+                                <i class="fas fa-newspaper text-white text-5xl opacity-50"></i>
+                            </div>
+                        @endif
                 <div class="p-6">
                     <div class="flex items-center text-gray-500 text-sm mb-4">
                         <i class="fas fa-user-circle mr-2"></i>

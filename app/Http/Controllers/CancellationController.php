@@ -46,14 +46,9 @@ class CancellationController extends Controller
             'reason' => $data['reason'],
             'refund_amount' => null,
             'admin_note' => null,
+            'refund_method' => $data['refund_method'] ?? null,
             'status' => 'pending',
         ]);
-
-        // store optional refund method in admin_note for now (or add dedicated column later)
-        if (!empty($data['refund_method'])) {
-            $cancellation->admin_note = 'Refund method: ' . $data['refund_method'];
-            $cancellation->save();
-        }
 
         return redirect()->route('cancellations.index')->with('success', 'Pengajuan pembatalan berhasil dikirim. Tim kami akan meninjau dan menghubungi Anda.');
     }

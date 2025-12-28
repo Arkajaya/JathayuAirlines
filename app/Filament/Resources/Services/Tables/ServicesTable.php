@@ -43,7 +43,7 @@ class ServicesTable
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('price')
-                    ->money()
+                    ->formatStateUsing(fn ($state) => 'Rp ' . number_format($state, 0, ',', '.'))
                     ->sortable(),
                 TextColumn::make('class')
                     ->searchable(),

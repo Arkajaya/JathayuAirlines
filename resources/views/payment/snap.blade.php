@@ -3,7 +3,7 @@
 @section('title', 'Pembayaran')
 
 @section('content')
-<div class="container mx-auto py-8 max-w-2xl px-4">
+<div class="container mx-auto py-8 max-w-2xl px-4 h-lvh">
     <h1 class="text-2xl font-semibold mb-6">Pembayaran Booking</h1>
 
     <div class="bg-white p-6 rounded shadow-sm">

@@ -12,11 +12,10 @@
             @php
                 $hasRevenue = collect($monthlyRevenue)->sum() > 0;
             @endphp
-            @if($hasRevenue)
-                <canvas id="chartRevenue" height="200"></canvas>
-            @else
-                <div class="py-12 text-center text-gray-500">Tidak ada data pendapatan untuk 12 bulan terakhir.</div>
-            @endif
+            <canvas id="chartRevenue" height="200"></canvas>
+            @unless($hasRevenue)
+                <div class="py-4 text-center text-sm text-gray-500">Tidak ada data pendapatan untuk 12 bulan terakhir.</div>
+            @endunless
         </div>
 
         <div class="bg-white p-4 rounded-lg shadow">
@@ -24,19 +23,17 @@
             @php
                 $hasBookings = collect($bookings30)->sum() > 0;
             @endphp
-            @if($hasBookings)
-                <canvas id="chartBookings30" height="200"></canvas>
-            @else
-                <div class="py-12 text-center text-gray-500">Tidak ada pemesanan dalam 30 hari terakhir.</div>
-            @endif
+            <canvas id="chartBookings30" height="200"></canvas>
+            @unless($hasBookings)
+                <div class="py-4 text-center text-sm text-gray-500">Tidak ada pemesanan dalam 30 hari terakhir.</div>
+            @endunless
         </div>
 
         <div class="bg-white p-4 rounded-lg shadow">
             <h3 class="font-semibold mb-2">Class Distribution</h3>
-            @if(count($classLabels))
-                <canvas id="chartClass" height="200"></canvas>
-            @else
-                <div class="py-12 text-center text-gray-500">Tidak ada data kelas layanan.</div>
+            <canvas id="chartClass" height="200"></canvas>
+            @if(!count($classLabels))
+                <div class="py-4 text-center text-sm text-gray-500">Tidak ada data kelas layanan.</div>
             @endif
         </div>
 
@@ -64,8 +61,8 @@
         const classLabels = @json($classLabels);
         const classData = @json($classData);
 
-        // Revenue chart (only init if data exists)
-        if (Array.isArray(monthlyRevenue) && monthlyRevenue.reduce((a,b) => a+b, 0) > 0) {
+        // Revenue chart: always init (zeros allowed). Format ticks as IDR.
+        (function(){
             const ctxRevenue = document.getElementById('chartRevenue').getContext('2d');
             new Chart(ctxRevenue, {
                 type: 'line',
@@ -77,19 +74,37 @@
                         backgroundColor: 'rgba(59,130,246,0.08)',
                         borderColor: 'rgba(59,130,246,1)',
                         tension: 0.25,
+                        fill: true,
                     }]
                 },
                 options: {
                     responsive: true,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const v = context.parsed.y ?? context.parsed;
+                                    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(v);
+                                }
+                            }
+                        }
+                    },
                     scales: {
-                        y: { beginAtZero: true }
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(value);
+                                }
+                            }
+                        }
                     }
                 }
             });
-        }
+        })();
 
-        // Bookings 30 days chart
-        if (Array.isArray(bookings30) && bookings30.reduce((a,b) => a+b, 0) > 0) {
+        // Bookings 30 days chart: always init
+        (function(){
             const ctxB30 = document.getElementById('chartBookings30').getContext('2d');
             new Chart(ctxB30, {
                 type: 'bar',
@@ -101,26 +116,31 @@
                         backgroundColor: 'rgba(16,185,129,0.8)'
                     }]
                 },
-                options: { responsive: true, scales: { y: { beginAtZero: true } } }
+                options: { 
+                    responsive: true, 
+                    scales: { y: { beginAtZero: true, ticks: { precision:0 } } } 
+                }
             });
-        }
+        })();
 
-        // Class distribution pie
-        if (Array.isArray(classLabels) && classLabels.length > 0) {
+        // Class distribution pie (guard if empty)
+        (function(){
             const ctxClass = document.getElementById('chartClass').getContext('2d');
+            const labels = (Array.isArray(classLabels) && classLabels.length) ? classLabels : ['No data'];
+            const data = (Array.isArray(classData) && classData.length) ? classData : [0];
             new Chart(ctxClass, {
                 type: 'doughnut',
                 data: {
-                    labels: classLabels,
+                    labels: labels,
                     datasets: [{
-                        data: classData,
+                        data: data,
                         backgroundColor: [
                             '#60A5FA', '#34D399', '#FBBF24', '#F87171', '#C4B5FD'
                         ]
                     }]
                 },
-                options: { responsive: true }
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
             });
-        }
+        })();
     </script>
 @endsection

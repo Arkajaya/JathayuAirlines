@@ -89,7 +89,7 @@
     @include('components.navbar')
     
    <!-- Main Content -->
-<main class="flex-grow">
+<main class="flex-grow pb-24">
     @yield('content')
 </main>
 

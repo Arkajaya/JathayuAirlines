@@ -33,7 +33,7 @@ class BookingFactory extends Factory
             'total_price' => 0,
             'status' => $faker->randomElement(['pending', 'confirmed', 'cancelled', 'completed']),
             'payment_method' => $faker->randomElement($paymentMethods),
-            'payment_status' => $faker->randomElement(['pending', 'paid', 'failed']),
+            'payment_status' => $faker->randomElement(['pending', 'paid', 'failed', 'refunded']),
             'special_request' => $faker->optional()->sentence(),
             'is_checkin' => $faker->boolean(20),
         ];
