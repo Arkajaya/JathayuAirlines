@@ -1,4 +1,4 @@
-# JATHAYU Airlines V.1.1.3 — Web Aplikasi (UAS Pemrograman Web) 
+# JATHAYU Airlines V 1.1.4.1 — Web Aplikasi (UAS Pemrograman Web) 
 
 Repositori ini berisi proyek web pemesanan maskapai untuk untuk memenuhi UAS matakuliah Pemrogaman Web 2025. README ini memuat cara setup lokal, dependensi utama, dan perintah troubleshooting cepat.
 
