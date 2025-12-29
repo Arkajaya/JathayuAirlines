@@ -145,6 +145,44 @@ Catatan: Filament biasanya diinstal via `composer require` dan memiliki instruks
 - Error: "Target class [App\\Http\\Middleware\\RedirectAdminToFilament] does not exist" → jalankan `composer dump-autoload` lalu `php artisan config:clear`.
 - Grafik kosong → buka DevTools, periksa `filament-widgets-charts.js` dan `highcharts.js`; jalankan perintah cache clear jika ada perubahan file.
 
+## Pengujian email (sandbox)
+Untuk menguji fitur yang mengirim email (mis. lupa password) tanpa mengirim ke alamat nyata, gunakan sandbox:
+
+- Mailtrap (cloud): daftar di https://mailtrap.io, ambil kredensial SMTP, lalu di `.env`:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_mailtrap_user
+MAIL_PASSWORD=your_mailtrap_password
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="JATHAYU Airlines"
+```
+
+Setelah mengubah `.env` jalankan:
+
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+```
+
+- MailHog (lokal): jalankan MailHog, lalu set `.env`:
+
+```dotenv
+MAIL_MAILER=smtp
+MAIL_HOST=127.0.0.1
+MAIL_PORT=1025
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="JATHAYU Airlines"
+```
+
+Buka `http://localhost:8025` untuk melihat email yang dikirim.
+
+## Midtrans (sandbox)
+Proyek sudah memakai variabel `MIDTRANS_SERVER_KEY` dan `MIDTRANS_CLIENT_KEY` di `.env`. Untuk pengujian, gunakan kredensial Sandbox dari akun Midtrans. Jika integrasi membaca key dari `.env`, tidak perlu ubah kode — cukup ganti key dengan yang sandbox.
+
 ## Struktur penting
 - `app/Filament` — resources & widgets Filament
 - `app/Http` — controllers, middleware (mis. `RedirectAdminToFilament`)
