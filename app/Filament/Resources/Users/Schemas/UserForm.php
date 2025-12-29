@@ -18,6 +18,7 @@ class UserForm
                 TextInput::make('email')->email()->required()->unique(ignoreRecord: true),
                 TextInput::make('password')
                     ->password()
+                    ->extraInputAttributes(['data-password-toggle' => 'true'])
                     ->dehydrateStateUsing(fn ($state) => $state ? bcrypt($state) : null)
                     ->required(fn ($context) => $context === 'create'),
                 Select::make('role_id')
