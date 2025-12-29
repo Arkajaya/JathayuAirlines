@@ -10,7 +10,11 @@ class Cancellation extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['booking_id', 'user_id', 'reason', 'status', 'admin_note', 'refund_amount'];
+    protected $fillable = ['booking_id', 'user_id', 'reason', 'status', 'admin_note', 'refund_amount', 'refund_method'];
+    protected $casts = [
+        'refund_amount' => 'decimal:2',
+        'reviewed_at' => 'datetime',
+    ];
 
     public function booking()
     {

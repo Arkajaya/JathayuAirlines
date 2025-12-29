@@ -21,9 +21,8 @@ class BlogsTable
             ->columns([
                 TextColumn::make('title')
                     ->searchable(),
-                TextColumn::make('slug')
-                    ->searchable(),
-                TextColumn::make('author')
+                TextColumn::make('updated_at')
+                    ->label('Published At')
                     ->searchable(),
                 TextColumn::make('views')
                     ->label('Views')

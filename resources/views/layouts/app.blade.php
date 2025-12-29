@@ -89,7 +89,7 @@
     @include('components.navbar')
     
    <!-- Main Content -->
-<main class="flex-grow">
+<main class="flex-grow pb-24">
     @yield('content')
 </main>
 
@@ -132,6 +132,12 @@
         Toast.fire({
             icon: 'error',
             title: '{{ session('error') }}'
+        });
+    @endif
+    @if($errors->any())
+        Toast.fire({
+            icon: 'error',
+            title: {!! json_encode($errors->first()) !!}
         });
     @endif
 </script>

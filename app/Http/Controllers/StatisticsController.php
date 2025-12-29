@@ -19,7 +19,7 @@ class StatisticsController extends Controller
             $months[] = $m->format('Y-m');
         }
 
-        $driver = config('database.connections.' . config('database.default') . '.driver');
+        $driver = config('database.connections.' . config('database.default') . '.driver', 'mysql');
 
         if ($driver === 'pgsql') {
             $monthExpr = "to_char(created_at, 'YYYY-MM')";
@@ -28,9 +28,9 @@ class StatisticsController extends Controller
             $monthExpr = "DATE_FORMAT(created_at, '%Y-%m')";
         }
 
+        // Include all bookings for revenue aggregates (paid or not) to ensure chart shows values when present.
         $revenueRows = Booking::selectRaw("{$monthExpr} as month, SUM(total_price) as revenue")
             ->where('created_at', '>=', $now->copy()->subMonths(11)->startOfMonth())
-            ->where('payment_status', 'paid')
             ->groupBy('month')
             ->pluck('revenue', 'month')
             ->toArray();
@@ -65,8 +65,9 @@ class StatisticsController extends Controller
         }, $labels30);
 
         // Class distribution (by service.class)
-        $classRows = Booking::join('services', 'bookings.service_id', '=', 'services.id')
-            ->selectRaw('services.class as svc_class, COUNT(bookings.id) as cnt')
+        // Class distribution: treat null/empty classes as 'Unknown'
+        $classRows = Booking::leftJoin('services', 'bookings.service_id', '=', 'services.id')
+            ->selectRaw("COALESCE(NULLIF(services.class, ''), 'Unknown') as svc_class, COUNT(bookings.id) as cnt")
             ->groupBy('svc_class')
             ->pluck('cnt', 'svc_class')
             ->toArray();

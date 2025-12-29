@@ -56,40 +56,23 @@ class DatabaseSeeder extends Seeder
             // ignore if roles not configured
         }
 
-        // Create additional users
-        User::factory(50)->create();
+        // Create additional regular users
+        $additionalUsers = User::factory(30)->create()->each(function ($u) {
+            $u->role_id = 3; // regular user role_id
+            $u->save();
+            try { $u->assignRole('User'); } catch (\Exception $e) { }
+        });
 
         // Create services (flights)
         Service::factory(20)->create();
 
-        // Create blogs using factory
-        Blog::factory(10)->create();
-
-        // Create bookings: attach to existing users and services and compute total_price
-        $users = User::all();
-        $services = Service::all();
-
-        $bookings = Booking::factory(150)->make()->each(function ($booking) use ($users, $services) {
-            $booking->user_id = $users->random()->id;
-            $service = $services->random();
-            $booking->service_id = $service->id;
-            $booking->total_price = $service->price * $booking->passenger_count;
-            $booking->save();
-        });
-
-        // Create cancellations for some bookings
-        $bookings = Booking::inRandomOrder()->take(20)->get();
-        foreach ($bookings as $b) {
-            Cancellation::factory()->create([
-                'booking_id' => $b->id,
-                'user_id' => $b->user_id,
-            ]);
+        // Create blogs using factory, set featured_image to Unsplash random images (travel themed)
+        for ($i = 1; $i <= 12; $i++) {
+            $blog = Blog::factory()->make();
+            // Use Unsplash random image with a signature to vary images
+            $blog->featured_image = 'https://source.unsplash.com/random/1200x800?travel,airplane&sig=' . $i;
+            $blog->save();
         }
 
-        // Activity logs
-        ActivityLog::factory(200)->make()->each(function ($log) use ($users) {
-            $log->user_id = $users->random()->id;
-            $log->save();
-        });
     }
 }

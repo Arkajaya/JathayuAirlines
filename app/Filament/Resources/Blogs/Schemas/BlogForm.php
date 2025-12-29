@@ -21,7 +21,7 @@ class BlogForm
                 Textarea::make('excerpt')->columnSpanFull(),
                 MarkdownEditor::make('content')->required()->columnSpanFull()->minHeight('300px'),
                 TextInput::make('author')->required(),
-                FileUpload::make('featured_image')->image()->nullable(),
+                FileUpload::make('featured_image')->image()->disk('public')->nullable(),
             ]);
     }
 }

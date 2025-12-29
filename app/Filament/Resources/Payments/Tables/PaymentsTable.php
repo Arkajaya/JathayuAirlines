@@ -38,12 +38,6 @@ class PaymentsTable
             ->recordActions([
                 ViewAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                ]),
-            ]);
+            ->toolbarActions([]);
     }
 }

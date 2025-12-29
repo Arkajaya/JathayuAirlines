@@ -43,13 +43,7 @@ class ServiceForm
                 DateTimePicker::make('arrival_time')
                     ->label('Arrival Time')
                     ->required(),
-
-                TextInput::make('duration')
-                    ->label('Duration (minutes)')
-                    ->numeric()
-                    ->placeholder('e.g. 180')
-                    ->helperText('Estimated flight duration in minutes')
-                    ->required(),
+                // Duration is calculated automatically from departure and arrival times.
 
                 Select::make('class')
                     ->label('Class')
@@ -73,8 +67,7 @@ class ServiceForm
                     ->label('Booked Seats')
                     ->numeric()
                     ->default(0)
-                    ->helperText('Number of already booked seats')
-                    ->required(),
+                    ->helperText('Optional: number of seats already booked (leave blank to default to 0)'),
 
                 Textarea::make('description')
                     ->label('Description')

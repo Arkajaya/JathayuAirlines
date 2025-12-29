@@ -17,6 +17,11 @@ class InjectFilamentAssets
             return $response;
         }
 
+        // Do not modify Livewire/XHR requests or ajax calls — they return fragments
+        if ($request->ajax() || $request->header('X-Livewire')) {
+            return $response;
+        }
+
         if (! $response instanceof Response) {
             return $response;
         }

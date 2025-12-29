@@ -31,7 +31,22 @@ class Service extends Model
         'arrival_time' => 'datetime',
         'is_active' => 'boolean',
         'price' => 'decimal:2',
+        'duration' => 'integer',
     ];
+
+    protected static function booted()
+    {
+        static::saving(function ($service) {
+            if ($service->departure_time && $service->arrival_time) {
+                try {
+                    $diff = $service->arrival_time->diffInMinutes($service->departure_time);
+                    $service->duration = (int) $diff;
+                } catch (\Throwable $e) {
+                    // ignore parsing errors
+                }
+            }
+        });
+    }
 
     public function bookings()
     {

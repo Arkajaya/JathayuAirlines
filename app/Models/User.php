@@ -60,7 +60,19 @@ class User extends Authenticatable
             }
         }
 
-        return (int) $this->role_id === 1;
+        // Fallback: resolve role_id to role name if Spatie roles are present
+        if ($this->role_id) {
+            try {
+                $role = \Spatie\Permission\Models\Role::find($this->role_id);
+                if ($role && strtolower($role->name) === 'admin') {
+                    return true;
+                }
+            } catch (\Exception $e) {
+                // ignore and final fallback
+            }
+        }
+
+        return false;
     }
 
 }

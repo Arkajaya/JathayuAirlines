@@ -32,6 +32,14 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+// Destinations page (public)
+Route::get('/destinations', [HomeController::class, 'destinations'])->name('destinations');
+// Public listing/search of services (allow guests to search available flights)
+Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+
+// Blog Routes (public)
+Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
+Route::get('/blogs/{blog:slug}', [BlogController::class, 'show'])->name('blogs.show');
 
 // ==============================================
 // AUTH ROUTES (BAWAAN LARAVEL BREEZE)
@@ -62,26 +70,36 @@ Route::post('/email/verification-notification', [EmailVerificationNotificationCo
 // Dashboard route used by auth controllers
 Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
+// Override Filament logout to redirect to user dashboard instead of Filament login
+$adminPath = trim((string) config('filament.path', 'admin'), '/');
+Route::match(['get','post'], "/{$adminPath}/logout", function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('dashboard');
+});
+
 
 // ==============================================
 // PROTECTED ROUTES (HANYA UNTUK USER LOGIN)
+// Redirect admin/staff to Filament admin panel via middleware
 // ==============================================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\RedirectAdminToFilament::class])->group(function () {
     // Booking Routes
-    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{service}/create', [BookingController::class, 'create'])->name('bookings.create');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
+    Route::get('/bookings/{booking}/invoice', [BookingController::class, 'invoice'])->name('bookings.invoice');
     Route::get('/bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
     Route::get('/my-bookings', [BookingController::class, 'myBookings'])->name('bookings.my-bookings');
     
     // Blog Routes
-    Route::get('/blogs', [BlogController::class, 'index'])->name('blogs.index');
-    Route::get('/blogs/{blog:slug}', [BlogController::class, 'show'])->name('blogs.show');
+    // (moved to public routes)
     
     // Check-in Routes
     Route::get('/checkin', [CheckInController::class, 'index'])->name('checkin.index');
     Route::post('/checkin', [CheckInController::class, 'process'])->name('checkin.process');
     Route::post('/checkin/confirm', [CheckInController::class, 'confirm'])->name('checkin.confirm');
+    Route::get('/checkin/{booking}/boarding-pass', [CheckInController::class, 'boardingPass'])->name('checkin.boarding-pass');
     
     // Cancellation Routes
     Route::get('/cancellations', [CancellationController::class, 'index'])->name('cancellations.index');
@@ -101,13 +119,15 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Admin dashboard
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-
     
     // Logout
     Route::post('/logout', function () {
         Auth::logout();
         return redirect('/');
     })->name('logout');
+});
+
+// Admin-only routes (separate group)
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 });

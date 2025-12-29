@@ -16,6 +16,8 @@ class Booking extends Model
         'service_id',
         'passenger_count',
         'passenger_details',
+        'seats',
+        'travel_class',
         'total_price',
         'status',
         'payment_method',
@@ -26,6 +28,7 @@ class Booking extends Model
 
     protected $casts = [
         'passenger_details' => 'array',
+        'seats' => 'array',
         'total_price' => 'decimal:2',
         'is_checkin' => 'boolean',
     ];

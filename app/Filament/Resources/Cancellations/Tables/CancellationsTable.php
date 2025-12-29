@@ -39,10 +39,6 @@ class CancellationsTable
                         default => null,
                     })
                     ->searchable(),
-                IconColumn::make('refund_method')
-                    ->label('Refund')
-                    ->icon(fn ($state) => $state === 'bank_transfer' ? Heroicon::Banknotes : ( $state === 'wallet' ? Heroicon::CreditCard : null ))
-                    ->sortable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -65,12 +61,16 @@ class CancellationsTable
                     ->label('Approve')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => auth()->user() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Staff')) && $record->status === 'pending')
+                    ->modalHeading('Approve cancellation?')
+                    ->modalButton('Approve cancellation')
+                    ->visible(fn ($record) => auth()->user() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Staff')) && $record->status === 'pending' && !is_null($record->reviewed_at))
                     ->action(function ($record) {
+                        // Approve the cancellation regardless of payment state.
                         $record->status = 'approved';
                         $record->save();
 
                         if ($record->booking) {
+                            // Mark booking cancelled; refund processing occurs only in observer when appropriate.
                             $record->booking->update(['status' => 'cancelled']);
                         }
 
@@ -83,7 +83,9 @@ class CancellationsTable
                     ->label('Reject')
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->visible(fn ($record) => auth()->user() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Staff')) && $record->status === 'pending')
+                    ->modalHeading('Reject cancellation?')
+                    ->modalButton('Reject cancellation')
+                    ->visible(fn ($record) => auth()->user() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Staff')) && $record->status === 'pending' && !is_null($record->reviewed_at))
                     ->action(function ($record) {
                         $record->status = 'rejected';
                         $record->save();
@@ -91,6 +93,23 @@ class CancellationsTable
                         Notification::make()
                             ->title('Cancellation rejected')
                             ->danger()
+                            ->send();
+                    }),
+                Action::make('review')
+                    ->label('Review')
+                    ->icon(Heroicon::Eye)
+                    ->color('primary')
+                    ->modalHeading('Alasan Pengajuan Pembatalan')
+                    ->modalSubheading(fn ($record) => $record->reason ?? '-')
+                    ->modalButton('Mark as Reviewed')
+                    ->visible(fn ($record) => auth()->user() && (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Staff')) && $record->status === 'pending' && is_null($record->reviewed_at))
+                    ->action(function ($record) {
+                        $record->reviewed_at = now();
+                        $record->save();
+
+                        Notification::make()
+                            ->title('Marked as reviewed')
+                            ->success()
                             ->send();
                     }),
             ])

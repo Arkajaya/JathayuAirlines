@@ -25,22 +25,27 @@ class AdminPanelProvider extends PanelProvider
     {
         // build widgets list based on role: hide summary/revenue/user widgets for Staff
         $widgets = [
-            AccountWidget::class,
+            // AccountWidget::class,
         ];
 
         $user = auth()->user();
         if ($user && $user->hasRole('Admin')) {
             $widgets = array_merge($widgets, [
-                \App\Filament\Widgets\SummaryMetricsWidget::class,
-                \App\Filament\Widgets\RecentInvoicesWidget::class,
-                \App\Filament\Widgets\CustomerGrowthWidget::class,
-                \App\Filament\Widgets\VisitByDeviceWidget::class,
+                \App\Filament\Widgets\AdminStatsWidget::class,
             ]);
         } else {
-            // Staff: include only non-sensitive widgets
             $widgets = array_merge($widgets, [
-                \App\Filament\Widgets\VisitByDeviceWidget::class,
+                \App\Filament\Widgets\AdminStatsWidget::class,
             ]);
+        }
+
+        if (class_exists(\Livewire\Livewire::class)) {
+            \Livewire\Livewire::component('app.filament.widgets.booking-stats-widget', \App\Filament\Widgets\BookingStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.user-stats-widget', \App\Filament\Widgets\UserStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.service-stats-widget', \App\Filament\Widgets\ServiceStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.cancellation-stats-widget', \App\Filament\Widgets\CancellationStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.activity-log-stats-widget', \App\Filament\Widgets\ActivityLogStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.payment-overview-widget', \App\Filament\Widgets\PaymentOverviewWidget::class);
         }
 
         return $panel
@@ -56,7 +61,6 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets($widgets)
             ->middleware([
                 EncryptCookies::class,
