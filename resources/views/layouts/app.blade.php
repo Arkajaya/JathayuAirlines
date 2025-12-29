@@ -134,6 +134,12 @@
             title: '{{ session('error') }}'
         });
     @endif
+    @if($errors->any())
+        Toast.fire({
+            icon: 'error',
+            title: {!! json_encode($errors->first()) !!}
+        });
+    @endif
 </script>
 
 @stack('scripts')

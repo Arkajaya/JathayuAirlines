@@ -70,11 +70,21 @@ Route::post('/email/verification-notification', [EmailVerificationNotificationCo
 // Dashboard route used by auth controllers
 Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
+// Override Filament logout to redirect to user dashboard instead of Filament login
+$adminPath = trim((string) config('filament.path', 'admin'), '/');
+Route::match(['get','post'], "/{$adminPath}/logout", function (Request $request) {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('dashboard');
+});
+
 
 // ==============================================
 // PROTECTED ROUTES (HANYA UNTUK USER LOGIN)
+// Redirect admin/staff to Filament admin panel via middleware
 // ==============================================
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\RedirectAdminToFilament::class])->group(function () {
     // Booking Routes
     Route::get('/bookings/{service}/create', [BookingController::class, 'create'])->name('bookings.create');
     Route::post('/bookings', [BookingController::class, 'store'])->name('bookings.store');
@@ -109,13 +119,15 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Admin dashboard
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-
     
     // Logout
     Route::post('/logout', function () {
         Auth::logout();
         return redirect('/');
     })->name('logout');
+});
+
+// Admin-only routes (separate group)
+Route::middleware(['auth', \App\Http\Middleware\AdminMiddleware::class])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 });

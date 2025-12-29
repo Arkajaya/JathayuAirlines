@@ -201,7 +201,7 @@
                                 
                                 @if(Auth::user()->isAdmin())
                                     <div class="border-t border-gray-100 my-2"></div>
-                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <a href="{{ url(config('filament.path', 'admin')) }}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                         <i class="fas fa-chart-line mr-3 text-primary"></i>
                                         <span class="font-medium text-primary">Dashboard Admin</span>
                                     </a>
@@ -318,11 +318,6 @@
                         <a href="{{ route('bookings.my-bookings') }}" class="block py-3 px-4 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-300">
                             <i class="fas fa-ticket-alt mr-3"></i> Riwayat Pemesanan
                         </a>
-                        @if(Auth::user()->isAdmin())
-                            <a href="{{ route('/filament/admin') }}" class="block py-3 px-4 text-primary hover:bg-blue-50 rounded-lg transition-colors duration-300">
-                                <i class="fas fa-chart-line mr-3"></i> Dashboard Admin
-                            </a>
-                        @endif
                     </div>
                 @else
                     <div class="border-t border-gray-100 pt-4 mt-4 space-y-3">

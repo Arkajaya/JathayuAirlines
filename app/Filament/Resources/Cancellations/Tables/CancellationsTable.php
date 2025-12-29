@@ -39,10 +39,6 @@ class CancellationsTable
                         default => null,
                     })
                     ->searchable(),
-                IconColumn::make('refund_method')
-                    ->label('Refund')
-                    ->icon(fn ($state) => $state === 'bank' ? Heroicon::Banknotes : ($state === 'balance' ? Heroicon::CreditCard : null))
-                    ->sortable(),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()

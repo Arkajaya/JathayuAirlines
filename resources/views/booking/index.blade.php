@@ -7,6 +7,15 @@
         <i class="fas fa-arrow-left mr-2"></i> <span class="hover:underline hover:underline-offset-2">Kembali ke beranda</span>
     </a>
     <div class="px-16 py-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-wrap justify-center ">
+        @if($flights->isEmpty())
+            <div class="col-span-1 md:col-span-2 lg:col-span-3 bg-white rounded-2xl shadow p-8 text-center">
+                <h3 class="text-xl font-semibold text-gray-800">Tidak ada penerbangan untuk kriteria pencarian Anda.</h3>
+                <p class="text-gray-600 mt-2">Coba ubah kota keberangkatan, tujuan, atau tanggal pencarian.</p>
+                <div class="mt-4">
+                    <a href="{{ route('bookings.index') }}" class="inline-block bg-primary text-white px-6 py-3 rounded-xl">Hapus filter / Tampilkan semua</a>
+                </div>
+            </div>
+        @else
         @foreach($flights as $flight)
         <div class="border-l-4 border-l-sky-400 bg-white rounded-lg shadow p-4 w-[23rem] hover:shadow-lg transition-transform transform hover:-translate-y-1">
             <div class="flex items-start justify-between">
@@ -32,6 +41,7 @@
             </div>
         </div>
         @endforeach
+        @endif
     </div>
 </div>
 @endsection

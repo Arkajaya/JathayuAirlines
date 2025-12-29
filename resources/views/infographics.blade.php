@@ -48,8 +48,7 @@
 
 @endsection
 
-@section('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+@push('scripts')
     <script>
         // Data from controller
         const months = @json($months);
@@ -63,8 +62,10 @@
 
         // Revenue chart: always init (zeros allowed). Format ticks as IDR.
         (function(){
-            const ctxRevenue = document.getElementById('chartRevenue').getContext('2d');
-            new Chart(ctxRevenue, {
+            const elRevenue = document.getElementById('chartRevenue');
+            if (elRevenue && elRevenue.getContext) {
+                const ctxRevenue = elRevenue.getContext('2d');
+                new Chart(ctxRevenue, {
                 type: 'line',
                 data: {
                     labels: months,
@@ -101,12 +102,15 @@
                     }
                 }
             });
+            }
         })();
 
         // Bookings 30 days chart: always init
         (function(){
-            const ctxB30 = document.getElementById('chartBookings30').getContext('2d');
-            new Chart(ctxB30, {
+            const elB30 = document.getElementById('chartBookings30');
+            if (elB30 && elB30.getContext) {
+                const ctxB30 = elB30.getContext('2d');
+                new Chart(ctxB30, {
                 type: 'bar',
                 data: {
                     labels: labels30,
@@ -121,14 +125,17 @@
                     scales: { y: { beginAtZero: true, ticks: { precision:0 } } } 
                 }
             });
+            }
         })();
 
         // Class distribution pie (guard if empty)
         (function(){
-            const ctxClass = document.getElementById('chartClass').getContext('2d');
-            const labels = (Array.isArray(classLabels) && classLabels.length) ? classLabels : ['No data'];
-            const data = (Array.isArray(classData) && classData.length) ? classData : [0];
-            new Chart(ctxClass, {
+            const elClass = document.getElementById('chartClass');
+            if (elClass && elClass.getContext) {
+                const ctxClass = elClass.getContext('2d');
+                const labels = (Array.isArray(classLabels) && classLabels.length) ? classLabels : ['No data'];
+                const data = (Array.isArray(classData) && classData.length) ? classData : [0];
+                new Chart(ctxClass, {
                 type: 'doughnut',
                 data: {
                     labels: labels,
@@ -141,6 +148,7 @@
                 },
                 options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
             });
+            }
         })();
     </script>
-@endsection
+@endpush

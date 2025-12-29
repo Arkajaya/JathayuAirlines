@@ -36,9 +36,11 @@ class BookingController extends Controller
 
         $flights = $query->orderBy('departure_time', 'asc')->get();
 
-        // If no upcoming flights (maybe admin created with past departure_time),
-        // fall back to active services so users can see what admin added.
-        if ($flights->isEmpty()) {
+        // Only fall back to showing all active services when the user did not
+        // apply any search filters. If filters were applied but no flights
+        // match, return an empty collection so the UI can show "no results".
+        $hasFilters = (bool) ($from || $to || $date || $flightId || $passengers);
+        if ($flights->isEmpty() && ! $hasFilters) {
             $flights = Service::where('is_active', true)
                 ->orderBy('departure_time', 'asc')
                 ->get();
