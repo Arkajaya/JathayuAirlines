@@ -10,8 +10,17 @@ class CancellationController extends Controller
 {
     public function index()
     {
-        $cancellations = Cancellation::where('user_id', auth()->id())->get();
-        return view('cancellation.index', compact('cancellations'));
+        $userId = auth()->id();
+
+        // Load user's bookings to allow initiating cancellation per booking
+        $bookings = Booking::with('service', 'cancellation')
+            ->where('user_id', $userId)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $cancellations = Cancellation::where('user_id', $userId)->orderByDesc('created_at')->get();
+
+        return view('cancellation.index', compact('bookings', 'cancellations'));
     }
 
     public function create(Booking $booking)
@@ -21,19 +30,26 @@ class CancellationController extends Controller
 
     public function store(Request $request, Booking $booking)
     {
-        $request->validate([
-            'reason' => 'required',
+        $data = $request->validate([
+            'reason' => 'required|string|max:2000',
+            'refund_method' => 'nullable|string|in:balance,bank',
         ]);
 
-        Cancellation::create([
+        // Prevent duplicate submission for the same booking
+        if ($booking->cancellation) {
+            return redirect()->route('cancellations.index')->with('error', 'Sudah terdapat pengajuan pembatalan untuk booking ini.');
+        }
+
+        $cancellation = Cancellation::create([
             'booking_id' => $booking->id,
-            'reason' => $request->reason,
+            'user_id' => auth()->id(),
+            'reason' => $data['reason'],
+            'refund_amount' => null,
+            'admin_note' => null,
+            'refund_method' => $data['refund_method'] ?? null,
             'status' => 'pending',
         ]);
 
-        // Ubah status booking menjadi cancelled? Atau tunggu persetujuan?
-        // Kita bisa ubah setelah persetujuan admin. Jadi sementara biarkan pending.
-
-        return redirect()->route('cancellation.index')->with('success', 'Pengajuan pembatalan berhasil.');
+        return redirect()->route('cancellations.index')->with('success', 'Pengajuan pembatalan berhasil dikirim. Tim kami akan meninjau dan menghubungi Anda.');
     }
 }

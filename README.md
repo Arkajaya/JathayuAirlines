@@ -1,59 +1,154 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# JATHAYU Airlines V.1.0.0 — Web Aplikasi (UAS Pemrograman Web) 
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Repositori ini berisi proyek web pemesanan maskapai untuk untuk memenuhi UAS matakuliah Pemrogaman Web 2025. README ini memuat cara setup lokal, dependensi utama, dan perintah troubleshooting cepat.
 
-## About Laravel
+**Fitur Aplikasi**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**User**
+- Registrasi Pengguna Baru
+- Pemesanan Tiket Pesawat + Checkin Online
+- Pengajuan Pembatalan (dengan dana refund)
+- Pembayaran via Midtrans(sandbox)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Admin dan Staff**
+- Statistik Transaksi Pemesanan
+- Manajemen User
+- Manajemen Service (Pelayanan)
+- Manajemen Cancellation (Approval Ajuan Pembatalan)
+- Monitoring Transaksi, dan User Activity
+Dan masing-masing role memiliki hak akses fitur yang berbeda
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Ringkasan teknologi**
+- Laravel (Blade, Controllers, Middleware)
+- Livewire (komponen interaktif)
+- Filament (admin panel)
+- Highcharts (widget admin, via CDN)
+- Chart.js (infografis publik)
+- Spatie Permission (opsional: role/permission)
 
-## Learning Laravel
+## Prasyarat
+- PHP >= 8.1
+- Composer
+- Node.js + npm (atau pnpm)
+- PostgreSQL (default di .env, bisa ganti ke MySQL jika perlu)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Install & Jalankan (singkat)
+1. Install dependencies PHP
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+composer install
+```
 
-## Laravel Sponsors
+2. Install node deps (opsional untuk build aset)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+npm install
+# atau pnpm install
+```
 
-### Premium Partners
+3. Copy `.env` dan sesuaikan (DB, APP_URL, MIDTRANS keys)
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+```bash
+cp .env.example .env
+# edit .env sesuai lingkungan
+php artisan key:generate
+```
 
-## Contributing
+4. Migrasi dan seed data (ada seeder contoh):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan migrate --seed
+# atau untuk development reset:
+php artisan migrate:fresh --seed
+```
 
-## Code of Conduct
+5. Jalankan server lokal:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+php artisan serve
+```
 
-## Security Vulnerabilities
+6. (Opsional) Build aset produksi:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+npm run build
+```
 
-## License
+## Perintah berguna
+- Bersihkan cache/config/view/route dan autoload:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+composer dump-autoload
+```
+
+## Admin / Filament
+- Panel admin di `/admin`.
+- Akun admin dibuat oleh seeder (cek `database/seeders/DatabaseSeeder.php`).
+- Grafik di dashboard admin diinisialisasi oleh `public/js/filament-widgets-charts.js` dan Highcharts (CDN). Jika grafik kosong, periksa apakah file JS dan Highcharts dimuat di DevTools > Network.
+
+## Dependensi library utama (ringkas)
+- `laravel/framework` — core
+- `filament/filament` — admin panel
+- `livewire/livewire` — komponen interaktif
+- `spatie/laravel-permission` — role/permission (jika dipakai)
+- `midtrans/midtrans-php` — integrasi pembayaran (opsional)
+- `chart.js` — infografis publik
+Catatan: beberapa library di-load via CDN (Highcharts) dan beberapa via composer/npm.
+
+## Perintah instalasi library (contoh)
+Gunakan perintah di bawah ini untuk menambahkan dependensi utama. Sesuaikan sesuai kebutuhan proyek.
+
+Composer (backend PHP):
+
+```bash
+composer require filament/filament
+composer require livewire/livewire
+composer require spatie/laravel-permission
+composer require midtrans/midtrans-php
+# Opsional (scaffolding auth):
+composer require laravel/breeze --dev
+```
+
+Setelah `composer require`, jalankan migrasi dan publish config jika perlu:
+
+```bash
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider" --tag="migrations"
+php artisan migrate
+php artisan vendor:publish --tag=filament-config
+```
+
+NPM (frontend / chart.js):
+
+```bash
+npm install chart.js
+# atau jika pakai yarn/pnpm:
+# yarn add chart.js
+# pnpm add chart.js
+```
+
+Jika Anda ingin build aset:
+
+```bash
+npm run dev
+# atau untuk produksi:
+npm run build
+```
+
+Catatan: Filament biasanya diinstal via `composer require` dan memiliki instruksi setup tersendiri (tabel, publish, dan akun admin). Lihat dokumentasi masing-masing paket untuk langkah detail.
+
+## Troubleshooting cepat
+- Error: "Target class [App\\Http\\Middleware\\RedirectAdminToFilament] does not exist" → jalankan `composer dump-autoload` lalu `php artisan config:clear`.
+- Grafik kosong → buka DevTools, periksa `filament-widgets-charts.js` dan `highcharts.js`; jalankan perintah cache clear jika ada perubahan file.
+
+## Struktur penting
+- `app/Filament` — resources & widgets Filament
+- `app/Http` — controllers, middleware (mis. `RedirectAdminToFilament`)
+- `public/js/filament-widgets-charts.js` — inisialisasi Highcharts
+- `resources/views` — Blade views
+- `database/seeders` — seeder data contoh
+
+

@@ -1,0 +1,77 @@
+/* Compiled copy of resources/css/filament-custom.css for serving */
+:root{
+	--filament-primary: #3674B5;
+	--filament-primary-2: #578FCA;
+	--filament-accent: #A1E3F9;
+	--filament-accent-2: #D1F8EF;
+	--filament-sidebar-bg: #F6FBFD;
+	--filament-card-bg: #ffffff;
+}
+
+.filament-sidebar{background-color:var(--filament-sidebar-bg)!important}
+.filament-sidebar .filament-nav-item{border-radius:10px;margin:.25rem 0}
+.filament-sidebar .filament-nav-item a{color:#0f172a}
+.filament-sidebar .filament-nav-item a:hover{background:linear-gradient(90deg,rgba(54,116,181,0.08),rgba(87,143,202,0.02))}
+
+.filament-topbar{background:linear-gradient(90deg,rgba(54,116,181,0.06),rgba(87,143,202,0.02));border-bottom:1px solid rgba(15,23,42,0.04)}
+.filament-topbar .filament-global-search{background:#fff;border-radius:12px;box-shadow:0 4px 10px rgba(2,6,23,0.04)}
+
+.filament-card{background-color:var(--filament-card-bg);border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+.text-accent,.bg-accent{color:var(--filament-primary)!important;background-color:var(--filament-primary)!important}
+.icon-accent svg{fill:var(--filament-primary)}
+.filament-tables-table tr:hover{background-color:rgba(54,116,181,0.03)}
+.filament-badge{border-radius:9999px;padding:.25rem .75rem}
+.filament-card .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.filament-card .card-title{font-weight:600}
+.filament-card .card-subtitle{color:#6b7280;font-size:.85rem}
+.filament-main{padding:1.25rem}
+.dashboard-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:1rem}
+.dashboard-card-wide{grid-column:span 8}
+.dashboard-card-narrow{grid-column:span 4}
+.stat-card{padding:12px;border-radius:12px;background:var(--filament-card-bg);box-shadow:0 6px 18px rgba(15,23,42,0.04);display:flex;flex-direction:column;gap:6px}
+.stat-card .stat-title{color:#6b7280;font-size:.85rem}
+.stat-card .stat-value{font-weight:700;font-size:1.1rem}
+.stat-card .stat-change{font-size:.85rem}
+.topbar-avatar{width:34px;height:34px;border-radius:9999px}
+
+/* Strong overrides to apply the palette across Filament components */
+/* Primary buttons and accents */
+.filament-button-primary,
+.filament-button.filament-button-primary,
+.filament-button.filament-button-primary:hover {
+	background-color: var(--filament-primary) !important;
+	border-color: var(--filament-primary) !important;
+	color: #fff !important;
+}
+
+/* Stat values and descriptions */
+.filament-widget .filament-widget-card .filament-widget-stat .stat-value {
+	color: var(--filament-primary) !important;
+}
+.filament-widget .filament-widget-card .filament-widget-stat .stat-description {
+	color: var(--filament-primary-2) !important;
+}
+
+/* Card headers and titles */
+.filament-card .card-title { color: #0f172a; }
+.filament-card .card-subtitle { color: #475569; }
+
+/* Sidebar active item */
+.filament-sidebar .filament-nav-item a[aria-current="page"],
+.filament-sidebar .filament-nav-item a:focus,
+.filament-sidebar .filament-nav-item a:hover {
+	background: linear-gradient(90deg, var(--filament-primary), var(--filament-primary-2));
+	color: #fff !important;
+}
+
+/* Badges and status */
+.filament-badge.filament-badge--primary { background: var(--filament-primary); color: #fff; }
+
+/* Tiny charts and svgs use the palette */
+.filament-widget svg path, .filament-widget svg circle, .filament-widget svg rect {
+	stroke: var(--filament-primary) !important;
+	fill: var(--filament-primary) !important;
+}
+
+/* Table header accent */
+.filament-tables-table thead th { color: #0f172a; }

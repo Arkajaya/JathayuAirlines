@@ -12,7 +12,7 @@ use Illuminate\View\View;
 class AuthenticatedSessionController extends Controller
 {
     /**
-     * Display the login view.
+     * Tampilkan halaman login.
      */
     public function create(): View
     {
@@ -20,7 +20,7 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request.
+     * Tangani permintaan autentikasi.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
@@ -28,11 +28,26 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Jika Admin/Staff, arahkan ke panel Filament
+        $user = $request->user();
+        try {
+            if ($user && method_exists($user, 'isAdmin') && $user->isAdmin()) {
+                $path = config('filament.path', 'admin');
+                return redirect()->intended('/'.trim($path, '/'));
+            }
+            if ($user && method_exists($user, 'hasRole') && ($user->hasRole('staff') || $user->hasRole('Staff'))) {
+                $path = config('filament.path', 'admin');
+                return redirect()->intended('/'.trim($path, '/'));
+            }
+        } catch (\Exception $e) {
+            // Abaikan kesalahan, lanjut ke dashboard pengguna
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
     /**
-     * Destroy an authenticated session.
+     * Hapus sesi autentikasi.
      */
     public function destroy(Request $request): RedirectResponse
     {

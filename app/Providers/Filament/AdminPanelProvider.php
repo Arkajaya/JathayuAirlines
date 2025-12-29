@@ -1,0 +1,81 @@
+<?php
+
+namespace App\Providers\Filament;
+
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\AuthenticateSession;
+use Filament\Http\Middleware\DisableBladeIconComponents;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Pages\Dashboard;
+use Filament\Panel;
+use Filament\PanelProvider;
+use Filament\Support\Colors\Color;
+use Filament\Widgets\AccountWidget;
+use Filament\Widgets\FilamentInfoWidget;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
+
+class AdminPanelProvider extends PanelProvider
+{
+    public function panel(Panel $panel): Panel
+    {
+        // build widgets list based on role: hide summary/revenue/user widgets for Staff
+        $widgets = [
+            // AccountWidget::class,
+        ];
+
+        $user = auth()->user();
+        if ($user && $user->hasRole('Admin')) {
+            $widgets = array_merge($widgets, [
+                \App\Filament\Widgets\AdminStatsWidget::class,
+            ]);
+        } else {
+            $widgets = array_merge($widgets, [
+                \App\Filament\Widgets\AdminStatsWidget::class,
+            ]);
+        }
+
+        if (class_exists(\Livewire\Livewire::class)) {
+            \Livewire\Livewire::component('app.filament.widgets.booking-stats-widget', \App\Filament\Widgets\BookingStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.user-stats-widget', \App\Filament\Widgets\UserStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.service-stats-widget', \App\Filament\Widgets\ServiceStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.cancellation-stats-widget', \App\Filament\Widgets\CancellationStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.activity-log-stats-widget', \App\Filament\Widgets\ActivityLogStatsWidget::class);
+            \Livewire\Livewire::component('app.filament.widgets.payment-overview-widget', \App\Filament\Widgets\PaymentOverviewWidget::class);
+        }
+
+        return $panel
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->login()
+            ->colors([
+                'primary' => Color::Amber,
+            ])
+            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->pages([
+                Dashboard::class,
+            ])
+            ->widgets($widgets)
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
+                \App\Http\Middleware\InjectFilamentAssets::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
+            ]);
+    }
+}

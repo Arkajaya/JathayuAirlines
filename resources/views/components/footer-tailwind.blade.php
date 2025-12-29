@@ -1,4 +1,4 @@
-<footer class="bg-gradient-to-b from-gray-900 to-gray-800 text-white">
+<footer class="bg-gradient-to-b from-gray-900 to-gray-800 text-white" id="footer">
     <!-- Main Footer Section -->
     <div class="container mx-auto px-4 py-12">
         <!-- Grid 3 Kolom Utama -->
@@ -7,7 +7,7 @@
             <!-- Kolom 1: Logo dan Deskripsi -->
             <div class="space-y-6">
                 <div class="flex items-center space-x-4">
-                    <img src="{{ asset('storage/logo.png') }}" alt="Jathayu Airlines" class="h-16">
+                    <img src="{{ asset('logo.png') }}" alt="Jathayu Airlines" class="h-16">
                     <div>
                         <h2 class="text-3xl font-bold bg-gradient-to-r from-blue-500 to-cyan-400 bg-clip-text text-transparent">
                             JATHAYU AIRLINES
@@ -57,7 +57,7 @@
                                         <i class="fab fa-whatsapp mr-2"></i> WhatsApp: 0852-3356-4701
                                     </a>
                                     <a href="mailto:neonardo_vierro@student.uns.ac.id" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
-                                        <i class="fas fa-envelope mr-2"></i> Email: neonardo_vierro@student.uns.ac.id
+                                        <i class="fas fa-envelope mr-2"></i> Email: neonardo_vierro@
                                     </a>
                                 </div>
                             </div>
@@ -79,11 +79,11 @@
                                     </div>
                                 </div>
                                 <div class="mt-3 space-y-1">
-                                    <div class="flex items-center text-gray-300 text-sm">
-                                        <i class="fas fa-phone mr-2"></i> Tel: 0821-3657-9945
-                                    </div>
-                                    <a href="mailto:rlfaldyilham01@student.uns.ac.id" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
-                                        <i class="fas fa-envelope mr-2"></i> Email: rlfaldyilham01@student.uns.ac.id
+                                    <a href="https://wa.me/6282323239844" class="flex items-center text-green-400 hover:text-green-300 text-sm">
+                                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp: 0823-2323-9844
+                                    </a>
+                                    <a href="mailto:asshyariintan@student.uns.ac.id" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
+                                        <i class="fas fa-envelope mr-2"></i> Email: asshyariintan@
                                     </a>
                                 </div>
                             </div>
@@ -105,14 +105,11 @@
                                     </div>
                                 </div>
                                 <div class="mt-3 space-y-1">
-                                    <div class="flex items-center text-gray-300 text-sm">
-                                        <i class="fas fa-phone mr-2"></i> Tel: 0821-3657-9945
-                                    </div>
-                                    <a href="mailto:lanacpx@gmail.com" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
-                                        <i class="fas fa-envelope mr-2"></i> Email: lanacpx@gmail.com
+                                    <a href="https://wa.me/6283843040121" class="flex items-center text-green-400 hover:text-green-300 text-sm">
+                                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp: 083843040121
                                     </a>
-                                    <a href="mailto:neodaisitva7@gmail.com" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
-                                        <i class="fas fa-envelope mr-2"></i> Email: neodaisitva7@gmail.com
+                                    <a href="mailto:hendraharyono@student.uns.ac.id" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
+                                        <i class="fas fa-envelope mr-2"></i> Email: hendraharyono@
                                     </a>
                                 </div>
                             </div>
@@ -134,14 +131,11 @@
                                     </div>
                                 </div>
                                 <div class="mt-3 space-y-1">
-                                    <div class="flex items-center text-gray-300 text-sm">
-                                        <i class="fas fa-phone mr-2"></i> Tel: 0821-3657-9945
-                                    </div>
-                                    <a href="mailto:nasruwldni933@gmail.com" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
-                                        <i class="fas fa-envelope mr-2"></i> Email: nasruwldni933@gmail.com
+                                    <a href="https://wa.me/6282136579945" class="flex items-center text-green-400 hover:text-green-300 text-sm">
+                                        <i class="fab fa-whatsapp mr-2"></i> WhatsApp: 082136579945
                                     </a>
                                     <a href="mailto:rlfaldyilham01@gmail.com" class="flex items-center text-blue-400 hover:text-blue-300 text-sm">
-                                        <i class="fas fa-envelope mr-2"></i> Email: rlfaldyilham01@gmail.com
+                                        <i class="fas fa-envelope mr-2"></i> Email: rlfaldyilham01@
                                     </a>
                                 </div>
                             </div>
@@ -176,15 +170,6 @@
                             <ul class="space-y-2">
                                 <li><a href="{{ route('cancellations.index') }}" class="text-gray-300 hover:text-blue-400 text-sm flex items-center">
                                     <i class="fas fa-times-circle mr-2"></i> Pembatalan
-                                </a></li>
-                                <li><a href="#" class="text-gray-300 hover:text-blue-400 text-sm flex items-center">
-                                    <i class="fas fa-tag mr-2"></i> Promo
-                                </a></li>
-                                <li><a href="#" class="text-gray-300 hover:text-blue-400 text-sm flex items-center">
-                                    <i class="fas fa-question-circle mr-2"></i> FAQ
-                                </a></li>
-                                <li><a href="#" class="text-gray-300 hover:text-blue-400 text-sm flex items-center">
-                                    <i class="fas fa-map-marker-alt mr-2"></i> Destinasi
                                 </a></li>
                             </ul>
                         </div>
