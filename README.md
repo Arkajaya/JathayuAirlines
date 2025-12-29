@@ -25,6 +25,7 @@ Dan masing-masing role memiliki hak akses fitur yang berbeda
 - Highcharts (widget admin, via CDN)
 - Chart.js (infografis publik)
 - Spatie Permission (opsional: role/permission)
+- Sweetalert (Notifikasi Sementara)
 
 ## Prasyarat
 - PHP >= 8.1
