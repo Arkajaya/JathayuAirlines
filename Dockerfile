@@ -34,7 +34,12 @@ WORKDIR /var/www/html
 
 # Copy composer.json first to leverage cache
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-ansi || composer install --no-dev --optimize-autoloader --no-interaction
+# Try a normal composer install; on failure print diagnostics and retry
+# with targeted ignore for ext-intl and ext-zip so CI builders without
+# those extensions can still complete the build. Avoid ignoring in
+# production images if possible — prefer installing extensions.
+RUN set -eux; \
+    composer install --no-dev --optimize-autoloader --no-interaction --no-ansi || (composer diagnose || true; composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip)
 
 # Copy application files
 COPY . .
