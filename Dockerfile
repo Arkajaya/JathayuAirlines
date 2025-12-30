@@ -9,16 +9,38 @@ RUN npm run build --silent || true
 
 # Stage 2: PHP with required extensions and Composer
 ## Composer stage: run composer in a composer image to avoid requiring extensions in final image
-FROM composer:2 AS composer_builder
+FROM php:8.3-cli-bullseye AS composer_builder
 WORKDIR /app
+
+# Install system deps needed for required PHP extensions in composer stage
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        g++ \
+        autoconf \
+        pkg-config \
+        libicu-dev \
+        libzip-dev \
+        zlib1g-dev \
+        libpng-dev \
+        libonig-dev \
+        libxml2-dev \
+        git \
+        unzip \
+        curl \
+    && docker-php-ext-install intl zip pdo pdo_mysql \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Composer into this stage by copying from official composer image
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 COPY composer.json composer.lock ./
-# Run diagnostics and a verbose composer install so build logs include the real error.
-# Retry with targeted ignores for ext-intl/ext-zip if the first install fails.
+# Run composer with diagnostics and verbose output; retry with targeted ignores only if needed
 RUN set -eux; \
     composer --version; \
     composer diagnose || true; \
     composer clear-cache || true; \
-    composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --no-progress --verbose || (echo "Composer install failed, showing diagnose and retrying with targeted ignores"; composer diagnose || true; composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --verbose --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip)
+    composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --no-progress --verbose || (echo "Composer install failed, retrying with targeted ignores"; composer diagnose || true; composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --verbose --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip)
 
 
 FROM php:8.3-fpm-bullseye
