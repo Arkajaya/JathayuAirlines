@@ -15,6 +15,10 @@ ARG GID=1000
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
+        build-essential \
+        g++ \
+        autoconf \
+        pkg-config \
         libicu-dev \
         libzip-dev \
         zlib1g-dev \
@@ -39,7 +43,11 @@ COPY composer.json composer.lock ./
 # those extensions can still complete the build. Avoid ignoring in
 # production images if possible — prefer installing extensions.
 RUN set -eux; \
-    composer install --no-dev --optimize-autoloader --no-interaction --no-ansi || (composer diagnose || true; composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip)
+    php -v; \
+    php -m || true; \
+    composer --version || true; \
+    composer diagnose || true; \
+    composer install --no-dev --optimize-autoloader --no-interaction || (echo "Composer install failed, retrying with targeted ignores..."; composer diagnose || true; composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip)
 
 # Copy application files
 COPY . .
