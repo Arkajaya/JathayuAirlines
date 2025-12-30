@@ -1,0 +1,11 @@
+vendor
+node_modules
+.env
+.git
+storage/framework/cache/data
+storage/logs
+public/build
+/.vscode
+/.idea
+npm-debug.log
+yarn-error.log
