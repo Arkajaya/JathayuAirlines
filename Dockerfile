@@ -12,8 +12,13 @@ RUN npm run build --silent || true
 FROM composer:2 AS composer_builder
 WORKDIR /app
 COPY composer.json composer.lock ./
-# prefer dist and no scripts to speed up builds; tolerate some network hiccups by retrying
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --no-progress || composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# Run diagnostics and a verbose composer install so build logs include the real error.
+# Retry with targeted ignores for ext-intl/ext-zip if the first install fails.
+RUN set -eux; \
+    composer --version; \
+    composer diagnose || true; \
+    composer clear-cache || true; \
+    composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --no-progress --verbose || (echo "Composer install failed, showing diagnose and retrying with targeted ignores"; composer diagnose || true; composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --verbose --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip)
 
 
 FROM php:8.3-fpm-bullseye
