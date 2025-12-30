@@ -8,6 +8,14 @@ COPY . .
 RUN npm run build --silent || true
 
 # Stage 2: PHP with required extensions and Composer
+## Composer stage: run composer in a composer image to avoid requiring extensions in final image
+FROM composer:2 AS composer_builder
+WORKDIR /app
+COPY composer.json composer.lock ./
+# prefer dist and no scripts to speed up builds; tolerate some network hiccups by retrying
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts --no-progress || composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+
 FROM php:8.3-fpm-bullseye
 
 ARG UID=1000
@@ -31,23 +39,13 @@ RUN apt-get update \
     && docker-php-ext-install intl zip pdo pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy composer from official composer image for reliability
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
 # Copy composer.json first to leverage cache
-COPY composer.json composer.lock ./
-# Try a normal composer install; on failure print diagnostics and retry
-# with targeted ignore for ext-intl and ext-zip so CI builders without
-# those extensions can still complete the build. Avoid ignoring in
-# production images if possible — prefer installing extensions.
-RUN set -eux; \
-    php -v; \
-    php -m || true; \
-    composer --version || true; \
-    composer diagnose || true; \
-    composer install --no-dev --optimize-autoloader --no-interaction || (echo "Composer install failed, retrying with targeted ignores..."; composer diagnose || true; composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-req=ext-intl --ignore-platform-req=ext-zip)
+## Copy composer artifacts from composer_builder stage (vendor, lock)
+COPY --from=composer_builder /app/vendor /var/www/html/vendor
+COPY --from=composer_builder /app/composer.lock /var/www/html/composer.lock
 
 # Copy application files
 COPY . .
