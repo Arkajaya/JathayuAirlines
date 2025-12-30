@@ -19,22 +19,26 @@ class ServiceForm
                     ->label('Flight Number')
                     ->placeholder('e.g. GA123')
                     ->helperText('Unique flight identifier')
-                    ->required(),
+                    ->required()
+                    ->maxLength(50),
 
                 TextInput::make('airline_name')
                     ->label('Airline')
                     ->placeholder('e.g. Garuda Indonesia')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
 
                 TextInput::make('departure_city')
                     ->label('Departure City')
                     ->placeholder('e.g. Jakarta (CGK)')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
 
                 TextInput::make('arrival_city')
                     ->label('Arrival City')
                     ->placeholder('e.g. Bali (DPS)')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
 
                 DateTimePicker::make('departure_time')
                     ->label('Departure Time')
@@ -53,6 +57,7 @@ class ServiceForm
                 TextInput::make('price')
                     ->label('Price')
                     ->numeric()
+                    ->minValue(0)
                     ->prefix('Rp ')
                     ->placeholder('0')
                     ->helperText('Set base ticket price'),
@@ -73,6 +78,7 @@ class ServiceForm
                     ->label('Description')
                     ->rows(4)
                     ->columnSpanFull()
+                    ->maxLength(2000)
                     ->placeholder('Add a short description about the service (airline, amenities, notes).'),
 
                 Toggle::make('is_active')

@@ -66,13 +66,6 @@ class DatabaseSeeder extends Seeder
         // Create services (flights)
         Service::factory(20)->create();
 
-        // Create blogs using factory, set featured_image to Unsplash random images (travel themed)
-        for ($i = 1; $i <= 12; $i++) {
-            $blog = Blog::factory()->make();
-            // Use Unsplash random image with a signature to vary images
-            $blog->featured_image = 'https://source.unsplash.com/random/1200x800?travel,airplane&sig=' . $i;
-            $blog->save();
-        }
 
     }
 }

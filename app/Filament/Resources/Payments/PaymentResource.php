@@ -23,7 +23,12 @@ class PaymentResource extends Resource
 
     protected static ?string $navigationLabel = 'Payments';
 
+    protected static ?string $label = 'Payment';
+    protected static ?string $pluralLabel = 'Payments';
+
     protected static UnitEnum|string|null $navigationGroup = 'Business Management';
+
+    protected static ?string $recordTitleAttribute = 'booking_code';
 
     public static function table(Table $table): Table
     {

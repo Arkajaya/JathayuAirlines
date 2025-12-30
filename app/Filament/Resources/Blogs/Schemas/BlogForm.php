@@ -16,11 +16,11 @@ class BlogForm
     {
         return $schema
             ->components([
-                TextInput::make('title')->required()->reactive(),
+                TextInput::make('title')->required()->reactive()->maxLength(255),
                 Toggle::make('is_published')->required(),
-                Textarea::make('excerpt')->columnSpanFull(),
+                Textarea::make('excerpt')->columnSpanFull()->maxLength(500),
                 MarkdownEditor::make('content')->required()->columnSpanFull()->minHeight('300px'),
-                TextInput::make('author')->required(),
+                TextInput::make('author')->required()->maxLength(255),
                 FileUpload::make('featured_image')->image()->disk('public')->nullable(),
             ]);
     }

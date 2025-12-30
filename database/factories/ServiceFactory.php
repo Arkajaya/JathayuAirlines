@@ -12,7 +12,7 @@ class ServiceFactory extends Factory
     public function definition(): array
     {
         $classes = ['economy', 'business', 'first'];
-        $faker = fake('id_ID');
+        $faker = $this->faker;
         $capacity = $faker->numberBetween(100, 300);
         $booked = $faker->numberBetween(0, $capacity);
 

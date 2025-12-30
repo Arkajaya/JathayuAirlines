@@ -11,7 +11,7 @@ class BlogFactory extends Factory
 
     public function definition(): array
     {
-        $faker = fake('id_ID');
+        $faker = $this->faker;
         $title = $faker->sentence(6);
 
         return [

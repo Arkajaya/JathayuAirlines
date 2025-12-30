@@ -18,7 +18,7 @@ class ActivityLogForm
                     ->label('User')
                     ->options(User::pluck('name', 'id')->toArray())
                     ->searchable(),
-                TextInput::make('action')->required(),
+                TextInput::make('action')->required()->maxLength(255),
                 Textarea::make('description')->columnSpanFull(),
             ]);
     }

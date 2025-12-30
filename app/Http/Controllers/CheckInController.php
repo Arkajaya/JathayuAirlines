@@ -37,6 +37,13 @@ class CheckInController extends Controller
             return back()->with('error', 'Check-in sudah dilakukan sebelumnya.');
         }
 
+        // Prevent check-in for unpaid bookings (admins may override)
+        if (($booking->payment_status ?? null) !== 'paid') {
+            if (! (Auth::check() && method_exists(Auth::user(), 'isAdmin') && Auth::user()->isAdmin())) {
+                return back()->with('error', 'Check-in hanya diperbolehkan untuk booking yang sudah dibayar.');
+            }
+        }
+
         // Show preview page (single passenger flow)
         return view('checkin.preview', compact('booking'));
     }
@@ -55,6 +62,13 @@ class CheckInController extends Controller
         if ($booking->is_checkin) {
             return redirect()->route('checkin.index')->with('error', 'Check-in sudah dilakukan untuk booking ini.');
         }
+
+            // Prevent confirming check-in for unpaid bookings (admins may override)
+            if (($booking->payment_status ?? null) !== 'paid') {
+                if (! (Auth::check() && method_exists(Auth::user(), 'isAdmin') && Auth::user()->isAdmin())) {
+                    return back()->with('error', 'Tidak dapat melakukan konfirmasi check-in: pembayaran belum lengkap.');
+                }
+            }
 
         // Allow passenger data override from the preview form (fields named passenger_details[name], etc.)
         $posted = $request->input('passenger_details', null);
