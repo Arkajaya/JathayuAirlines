@@ -17,13 +17,16 @@ class PaymentController extends Controller
     // Create snap token via Midtrans sandbox API
     public function createToken(Request $request, Booking $booking)
     {
-        $serverKey = env('MIDTRANS_SERVER_KEY');
+        $serverKey = trim((string) env('MIDTRANS_SERVER_KEY', ''));
         if (empty($serverKey)) {
             return response()->json(['error' => 'Midtrans server key not configured'], 500);
         }
 
         $orderId = 'BOOK' . $booking->id . '-' . time();
         $grossAmount = (int) round($booking->total_price ?? 0);
+        if ($grossAmount <= 0) {
+            return response()->json(['error' => 'Invalid amount for payment'], 400);
+        }
 
         $payload = [
             'transaction_details' => [
@@ -37,16 +40,19 @@ class PaymentController extends Controller
         ];
 
         try {
+            $base = env('MIDTRANS_PRODUCTION', false) ? 'https://app.midtrans.com' : 'https://app.sandbox.midtrans.com';
+            $url = $base . '/snap/v1/transactions';
+
             $response = Http::withBasicAuth($serverKey, '')
                 ->accept('application/json')
-                ->timeout(10)
-                ->post('https://app.sandbox.midtrans.com/snap/v1/transactions', $payload);
+                ->timeout(15)
+                ->post($url, $payload);
 
             $status = $response->status();
             $body = $response->body();
 
             if (! $response->successful()) {
-                // Return detailed error for debugging in dev environment
+                \Log::warning('Midtrans snap create failed', ['status' => $status, 'body' => $body, 'booking_id' => $booking->id]);
                 return response()->json([
                     'error' => 'Failed to create snap token',
                     'status' => $status,
@@ -57,6 +63,7 @@ class PaymentController extends Controller
             $data = $response->json();
             return response()->json(['token' => $data['token'] ?? null, 'redirect_url' => $data['redirect_url'] ?? null]);
         } catch (\Throwable $e) {
+            \Log::error('Exception when creating Midtrans snap token', ['exception' => $e->getMessage(), 'booking_id' => $booking->id]);
             return response()->json(['error' => 'Exception when creating snap token', 'message' => $e->getMessage()], 500);
         }
     }

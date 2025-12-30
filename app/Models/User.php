@@ -75,4 +75,67 @@ class User extends Authenticatable
         return false;
     }
 
+    /**
+     * Check if the user has a role by name.
+     * This overrides Spatie's `hasRole` to also fallback to `role_id` mapping
+     * so checks still work if Spatie roles are not yet synced in some environments.
+     *
+     * @param string|array $roles
+     * @return bool
+     */
+    public function hasRole($roles): bool
+    {
+        // normalize to array
+        $needles = is_array($roles) ? $roles : [$roles];
+
+        // check Spatie role names first (if package available)
+        try {
+            $assigned = $this->getRoleNames()->toArray();
+        } catch (\Throwable $e) {
+            $assigned = [];
+        }
+
+        foreach ($needles as $needle) {
+            if (in_array($needle, $assigned, true)) {
+                return true;
+            }
+        }
+
+        // fallback: try resolve role_id to name
+        if ($this->role_id) {
+            try {
+                $role = \Spatie\Permission\Models\Role::find($this->role_id);
+                if ($role && in_array($role->name, $needles, true)) {
+                    return true;
+                }
+            } catch (\Throwable $e) {
+                // ignore and continue
+            }
+        }
+
+        // last resort: case-insensitive match against assigned names
+        $lowerAssigned = array_map(fn($v) => strtolower($v), $assigned);
+        foreach ($needles as $needle) {
+            if (in_array(strtolower((string) $needle), $lowerAssigned, true)) {
+                return true;
+            }
+            if (strtolower((string) $needle) === 'admin' && $this->isAdmin()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Convenience: check any of multiple roles.
+     */
+    public function hasAnyRole(array $roles): bool
+    {
+        foreach ($roles as $r) {
+            if ($this->hasRole($r)) return true;
+        }
+        return false;
+    }
+
 }
