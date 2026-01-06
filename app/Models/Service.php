@@ -25,12 +25,14 @@ class Service extends Model
         'class',
         'description',
         'is_active',
+        'destination_image',
     ];
 
     protected $casts = [
         'departure_time' => 'datetime',
         'arrival_time' => 'datetime',
         'is_active' => 'boolean',
+        'destination_image' => 'string',
         'price' => 'decimal:2',
         'duration' => 'integer',
     ];
@@ -38,6 +40,18 @@ class Service extends Model
     protected static function booted()
     {
         static::saving(function ($service) {
+            // Ensure flight_number uniqueness at model level to surface validation errors
+            if (! empty($service->flight_number)) {
+                $query = static::where('flight_number', $service->flight_number);
+                if ($service->exists) {
+                    $query->where('id', '!=', $service->id);
+                }
+                if ($query->exists()) {
+                    throw ValidationException::withMessages([
+                        'flight_number' => 'Flight number has already been taken.',
+                    ]);
+                }
+            }
             // Capacity and booked seats must be non-negative
             if (isset($service->capacity) && $service->capacity < 0) {
                 throw ValidationException::withMessages([
@@ -79,12 +93,22 @@ class Service extends Model
             if ($service->departure_time && $service->arrival_time) {
                 try {
                     $diff = $service->arrival_time->diffInMinutes($service->departure_time);
-                    $service->duration = (int) $diff;
+                    // ensure non-negative duration
+                    $service->duration = max(0, (int) $diff);
                 } catch (\Throwable $e) {
                     // ignore parsing errors
                 }
             }
         });
+    }
+
+    /**
+     * Get duration in hours (float, 2 decimals).
+     */
+    public function getDurationHoursAttribute()
+    {
+        if (! isset($this->duration)) return 0;
+        return round($this->duration / 60, 2);
     }
 
     public function bookings()

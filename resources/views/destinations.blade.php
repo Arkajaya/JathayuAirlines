@@ -16,8 +16,12 @@
         @foreach($featured as $service)
             @php
                 $city = $service->arrival_city ?: $service->departure_city ?: 'travel';
-                $query = urlencode($city . ' travel landscape');
-                $img = "https://source.unsplash.com/800x600/?{$query}";
+                if (! empty($service->destination_image)) {
+                    $img = asset('storage/' . $service->destination_image);
+                } else {
+                    $query = urlencode($city . ' travel landscape');
+                    $img = "https://source.unsplash.com/800x600/?{$query}";
+                }
             @endphp
             <div class="rounded-xl overflow-hidden shadow-lg bg-white">
                 <img src="{{ $img }}" alt="{{ $city }}" class="w-full h-48 object-cover">
@@ -36,7 +40,14 @@
     <h2 class="text-2xl font-semibold mb-4">Semua Destinasi</h2>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
         @foreach($cities as $city)
-            @php $query = urlencode($city . ' city skyline'); $img = "https://source.unsplash.com/360x240/?{$query}"; @endphp
+            @php
+                if (! empty($cityImages[$city])) {
+                    $img = $cityImages[$city];
+                } else {
+                    $query = urlencode($city . ' city skyline');
+                    $img = "https://source.unsplash.com/360x240/?{$query}";
+                }
+            @endphp
             <a href="{{ route('bookings.index', ['to' => $city]) }}" class="group block rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition">
                 <div class="w-full h-28 bg-gray-100 overflow-hidden">
                     <img src="{{ $img }}" alt="{{ $city }}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform">

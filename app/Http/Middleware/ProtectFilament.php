@@ -23,7 +23,17 @@ class ProtectFilament
                 if (method_exists($user, 'isAdmin') && $user->isAdmin()) {
                     return $next($request);
                 }
+
+                // Staff can access general Filament panel, but restrict certain admin-only resources
                 if (method_exists($user, 'hasRole') && ($user->hasRole('Staff') || $user->hasRole('staff'))) {
+                    // check first path segment after admin
+                    $relative = preg_replace('#^'.preg_quote($adminPath,'#').'/?#', '', $uri);
+                    $first = explode('/', $relative)[0] ?? '';
+                    $adminOnly = ['users', 'activity-logs', 'payments'];
+                    if (in_array($first, $adminOnly, true)) {
+                        abort(403, 'Akses ditolak.');
+                    }
+
                     return $next($request);
                 }
             } catch (\Throwable $e) {

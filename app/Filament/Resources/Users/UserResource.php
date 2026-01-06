@@ -73,8 +73,10 @@ class UserResource extends Resource
     {
         $user = auth()->user();
         if (! $user) return false;
-        if ($user->hasRole('Admin') || $user->hasRole('Staff')) return true;
-        return $record ? $user->id === $record->id : true;
+        // Only Admin may view the users list or other users
+        if ($user->hasRole('Admin')) return true;
+        // allow viewing own profile
+        return $record ? $user->id === $record->id : false;
     }
 
     public static function canEdit($record = null): bool

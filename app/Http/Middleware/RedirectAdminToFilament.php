@@ -19,8 +19,8 @@ class RedirectAdminToFilament
                     $path = config('filament.path', 'admin');
                     return redirect()->to('/'.trim($path, '/'));
                 }
-                // Cek peran staff/admin (Spatie)
-                if (method_exists($user, 'hasRole') && ($user->hasRole('staff') || $user->hasRole('Staff') || $user->hasRole('Admin'))) {
+                // Also redirect staff to Filament
+                if (method_exists($user, 'hasRole') && ($user->hasRole('Staff') || $user->hasRole('staff'))) {
                     $path = config('filament.path', 'admin');
                     return redirect()->to('/'.trim($path, '/'));
                 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Service;
 use App\Models\Blog;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -58,9 +59,26 @@ class HomeController extends Controller
             ->take(12)
             ->get();
 
+        // Map city -> image URL (prefer service.destination_image)
+        $cityImages = [];
+        foreach ($cities as $city) {
+            $serviceWithImage = Service::where('is_active', true)
+                ->where(function ($q) use ($city) {
+                    $q->where('arrival_city', $city)->orWhere('departure_city', $city);
+                })
+                ->whereNotNull('destination_image')
+                ->orderByDesc('booked_seats')
+                ->first();
+
+            if ($serviceWithImage) {
+                $cityImages[$city] = Storage::url($serviceWithImage->destination_image);
+            }
+        }
+
         return view('destinations', [
             'cities' => $cities,
             'featured' => $featured,
+            'cityImages' => $cityImages,
         ]);
     }
 }

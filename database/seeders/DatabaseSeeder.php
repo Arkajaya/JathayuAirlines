@@ -77,7 +77,7 @@ class DatabaseSeeder extends Seeder
         });
 
         // services (flights)
-        Service::factory(20)->create();
+        // Service::factory(20)->create();
 
 
     }

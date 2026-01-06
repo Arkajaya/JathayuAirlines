@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 
 class ServiceForm
@@ -19,7 +20,8 @@ class ServiceForm
                     ->label('Flight Number')
                     ->placeholder('e.g. GA123')
                     ->helperText('Unique flight identifier')
-                    ->required(),
+                    ->required()
+                    ->rules(['unique:services,flight_number']),
 
                 TextInput::make('airline_name')
                     ->label('Airline')
@@ -82,6 +84,13 @@ class ServiceForm
                     ->rows(4)
                     ->columnSpanFull()
                     ->placeholder('Add a short description about the service (airline, amenities, notes).'),
+
+                FileUpload::make('destination_image')
+                    ->label('Destination Photo')
+                    ->disk('public')
+                    ->directory('services')
+                    ->helperText('Upload a photo to show on the destinations page (images recommended)')
+                    ->nullable(),
 
                 Toggle::make('is_active')
                     ->label('Active')

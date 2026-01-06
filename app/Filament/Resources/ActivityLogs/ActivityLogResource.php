@@ -79,7 +79,8 @@ class ActivityLogResource extends Resource
     public static function canView($record = null): bool
     {
         $user = auth()->user();
-        return $user && ($user->hasRole('Admin') || $user->hasRole('Staff'));
+        // Only Admin may view activity logs
+        return $user && $user->hasRole('Admin');
     }
 
     public static function canEdit($record = null): bool
