@@ -10,6 +10,7 @@ class ListPayments extends ListRecords
 {
     protected static string $resource = PaymentResource::class;
 
+
     protected function getHeaderWidgets(): array
     {
         return [PaymentOverviewWidget::class];

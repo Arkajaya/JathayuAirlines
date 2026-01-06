@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Filament;
 use Filament\Support\Colors\Color;
 
 use Illuminate\Support\Facades\Log;
@@ -90,6 +91,46 @@ class AppServiceProvider extends ServiceProvider
             FilamentColor::register(Color::all());
         } catch (\Throwable $e) {
             Log::debug('Filament color registration skipped: '.$e->getMessage());
+        }
+
+        // Restrict access to Filament admin panel to admins/staff only
+        try {
+            if (class_exists('\Filament\Filament')) {
+                Filament::auth(function () {
+                    $user = auth()->user();
+                    if (! $user) return false;
+                    try {
+                        if (method_exists($user, 'isAdmin') && $user->isAdmin()) return true;
+                        if (method_exists($user, 'hasRole') && ($user->hasRole('Staff') || $user->hasRole('staff'))) return true;
+                    } catch (\Throwable $e) {
+                        return false;
+                    }
+                    return false;
+                });
+            }
+        } catch (\Throwable $e) {
+            Log::debug('Filament auth guard skipped: '.$e->getMessage());
+        }
+
+        // Ensure all requests to Filament path go through ProtectFilament middleware
+        try {
+            $router = $this->app->make('\Illuminate\Routing\Router');
+            // Prepend so it runs early in the web group
+            if (method_exists($router, 'prependMiddlewareToGroup')) {
+                $router->prependMiddlewareToGroup('web', \App\Http\Middleware\ProtectFilament::class);
+            } else {
+                // Fallback: push to group
+                $router->pushMiddlewareToGroup('web', \App\Http\Middleware\ProtectFilament::class);
+            }
+        } catch (\Throwable $e) {
+            Log::debug('ProtectFilament middleware registration skipped: '.$e->getMessage());
+        }
+
+        // Bind Filament's Authenticate middleware to our stricter implementation
+        try {
+            $this->app->bind(\Filament\Http\Middleware\Authenticate::class, \App\Http\Middleware\FilamentAuthenticate::class);
+        } catch (\Throwable $e) {
+            Log::debug('Filament Authenticate binding skipped: '.$e->getMessage());
         }
     }
 }

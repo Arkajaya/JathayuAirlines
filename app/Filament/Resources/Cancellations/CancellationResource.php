@@ -29,7 +29,7 @@ class CancellationResource extends Resource
 
     protected static UnitEnum|string|null $navigationGroup = 'Business Management';
 
-    protected static ?string $recordTitleAttribute = 'Cancellation';
+    protected static ?string $recordTitleAttribute = 'Cancellations';
 
     public static function form(Schema $schema): Schema
     {
