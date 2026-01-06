@@ -38,11 +38,13 @@ class ServiceForm
 
                 DateTimePicker::make('departure_time')
                     ->label('Departure Time')
-                    ->required(),
+                    ->required()
+                    ->rules(['after_or_equal:now']),
 
                 DateTimePicker::make('arrival_time')
                     ->label('Arrival Time')
-                    ->required(),
+                    ->required()
+                    ->rules(['after_or_equal:departure_time', 'after_or_equal:now']),
                 // Duration is calculated automatically from departure and arrival times.
 
                 Select::make('class')
@@ -55,19 +57,25 @@ class ServiceForm
                     ->numeric()
                     ->prefix('Rp ')
                     ->placeholder('0')
-                    ->helperText('Set base ticket price'),
+                    ->helperText('Set base ticket price')
+                    ->minValue(0)
+                    ->required(),
 
                 TextInput::make('capacity')
                     ->label('Capacity')
                     ->numeric()
                     ->placeholder('e.g. 180')
-                    ->required(),
+                    ->minValue(0)
+                    ->required()
+                    ->rules(['integer','min:0']),
 
                 TextInput::make('booked_seats')
                     ->label('Booked Seats')
                     ->numeric()
                     ->default(0)
-                    ->helperText('Optional: number of seats already booked (leave blank to default to 0)'),
+                    ->helperText('Optional: number of seats already booked (leave blank to default to 0)')
+                    ->minValue(0)
+                    ->rules(['integer','min:0']),
 
                 Textarea::make('description')
                     ->label('Description')
